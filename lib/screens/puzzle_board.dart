@@ -13,7 +13,6 @@ class PuzzleBoard extends StatefulWidget {
 
 class _PuzzleBoardState extends State<PuzzleBoard> {
   late PuzzleGame _game;
-  int? _selectedIndex;
 
   @override
   void initState() {
@@ -22,20 +21,37 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     _game.shuffle();
   }
 
-  void _handleTileTap(int index) {
-    setState(() {
-      if (_selectedIndex == null) {
-        // Select first tile
-        _selectedIndex = index;
-      } else if (_selectedIndex == index) {
-        // Deselect if same tile tapped
-        _selectedIndex = null;
-      } else {
-        // Swap tiles
-        _game.swap(_selectedIndex!, index);
-        _selectedIndex = null;
-      }
-    });
+  Widget _buildTileContent(PuzzleTile tile, double size, {bool isFeedback = false}) {
+    final fullImageSize = size * widget.gridSize;
+    final int correctRow = tile.correctIndex ~/ widget.gridSize;
+    final int correctCol = tile.correctIndex % widget.gridSize;
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: isFeedback ? Colors.yellow : Colors.white,
+          width: isFeedback ? 2.0 : 0.5,
+        ),
+      ),
+      child: ClipRect(
+        child: OverflowBox(
+          maxWidth: fullImageSize,
+          maxHeight: fullImageSize,
+          minWidth: fullImageSize,
+          minHeight: fullImageSize,
+          alignment: Alignment(
+            (correctCol / (widget.gridSize - 1)) * 2 - 1,
+            (correctRow / (widget.gridSize - 1)) * 2 - 1,
+          ),
+          child: Image.asset(
+            'sample-images/ale-seby-ski.png',
+            fit: BoxFit.cover,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -49,7 +65,6 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
             onPressed: () {
               setState(() {
                 _game.shuffle();
-                _selectedIndex = null;
               });
             },
           ),
@@ -66,43 +81,33 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
             ),
             itemBuilder: (context, index) {
               final tile = _game.tiles[index];
-              // Use correctIndex to determine which part of the image to show
-              final int correctRow = tile.correctIndex ~/ widget.gridSize;
-              final int correctCol = tile.correctIndex % widget.gridSize;
 
-              final isSelected = _selectedIndex == index;
+              return LayoutBuilder(
+                builder: (context, constraints) {
+                  final size = constraints.maxWidth;
 
-              return GestureDetector(
-                onTap: () => _handleTileTap(index),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: isSelected ? Colors.yellow : Colors.white,
-                      width: isSelected ? 3.0 : 0.5,
-                    ),
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.cover,
-                    child: SizedBox(
-                      width: 1000,
-                      height: 1000,
-                      child: ClipRect(
-                        child: Align(
-                          alignment: Alignment(
-                            (correctCol / (widget.gridSize - 1)) * 2 - 1,
-                            (correctRow / (widget.gridSize - 1)) * 2 - 1,
-                          ),
-                          widthFactor: 1.0 / widget.gridSize,
-                          heightFactor: 1.0 / widget.gridSize,
-                          child: Image.asset(
-                            'sample-images/ale-seby-ski.png',
-                            fit: BoxFit.cover,
-                          ),
+                  return DragTarget<int>(
+                    onWillAccept: (data) => data != index,
+                    onAccept: (fromIndex) {
+                      setState(() {
+                        _game.swap(fromIndex, index);
+                      });
+                    },
+                    builder: (context, candidateData, rejectedData) {
+                      return Draggable<int>(
+                        data: index,
+                        feedback: Material(
+                          elevation: 4,
+                          child: _buildTileContent(tile, size, isFeedback: true),
                         ),
-                      ),
-                    ),
-                  ),
-                ),
+                        childWhenDragging: Container(
+                          color: Colors.grey.withOpacity(0.2),
+                        ),
+                        child: _buildTileContent(tile, size),
+                      );
+                    },
+                  );
+                },
               );
             },
           ),
