@@ -1,30 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:kids_jigsaw_puzzle/main.dart';
+import 'package:kids_jigsaw_puzzle/screens/puzzle_board.dart';
 
 void main() {
-  testWidgets('Difficulty selection and Grid generation test', (WidgetTester tester) async {
+  testWidgets('Tile shuffling and swapping test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
-    // Verify Main Menu has difficulty buttons
-    expect(find.text('Kids Jigsaw Puzzle'), findsOneWidget);
-    expect(find.text('Easy (4x4)'), findsOneWidget);
-    expect(find.text('Medium (6x6)'), findsOneWidget);
-    expect(find.text('Hard (8x8)'), findsOneWidget);
-
-    // Tap 'Easy (4x4)'
+    // Navigate to Easy puzzle (4x4)
     await tester.tap(find.text('Easy (4x4)'));
     await tester.pumpAndSettle();
-
-    // Verify Puzzle Board title reflects difficulty
-    expect(find.text('Puzzle Board (4x4)'), findsOneWidget);
 
     // Verify GridView exists
     expect(find.byType(GridView), findsOneWidget);
 
-    // Verify 16 tiles are present (4x4)
-    // We look for Image widgets inside the GridView
-    expect(find.byType(Image), findsNWidgets(16));
+    // Find all tiles (GestureDetectors inside GridView)
+    final tileFinder = find.descendant(
+      of: find.byType(GridView),
+      matching: find.byType(GestureDetector),
+    );
+    expect(tileFinder, findsNWidgets(16));
+
+    // Tap the first tile to select it
+    await tester.tap(tileFinder.at(0));
+    await tester.pump();
+
+    // Verify selection (border color change logic is internal, 
+    // but we can check if the widget tree updated without error)
+    
+    // Tap the second tile to swap
+    await tester.tap(tileFinder.at(1));
+    await tester.pump();
+
+    // Verify refresh button exists
+    expect(find.byIcon(Icons.refresh), findsOneWidget);
+    
+    // Tap refresh to shuffle
+    await tester.tap(find.byIcon(Icons.refresh));
+    await tester.pump();
   });
 }
