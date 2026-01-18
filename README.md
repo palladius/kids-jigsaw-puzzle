@@ -4,6 +4,8 @@
 > 
 > **Goal**: Create an interactive jigsaw puzzle game for kids where they can use their own photos (family, heroes, etc.) and solve puzzles by swapping tiles. Adjacent correct tiles merge automatically!
 
+![Example image of Ricc kids](image.png)
+
 ## 🎯 Objectives
 
 - [ ] Build a kid-friendly jigsaw puzzle game
