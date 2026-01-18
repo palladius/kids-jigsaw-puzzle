@@ -9,10 +9,13 @@ class PuzzleBoard extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Puzzle Board'),
       ),
-      body: const Center(
-        child: Text(
-          'Puzzle Grid will go here',
-          style: TextStyle(fontSize: 24),
+      body: Center(
+        child: AspectRatio(
+          aspectRatio: 1.0,
+          child: Image.asset(
+            'sample-images/ale-seby-ski.png',
+            fit: BoxFit.cover,
+          ),
         ),
       ),
     );
