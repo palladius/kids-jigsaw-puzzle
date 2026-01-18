@@ -13,12 +13,56 @@ class PuzzleBoard extends StatefulWidget {
 
 class _PuzzleBoardState extends State<PuzzleBoard> {
   late PuzzleGame _game;
+  final Stopwatch _stopwatch = Stopwatch();
 
   @override
   void initState() {
     super.initState();
     _game = PuzzleGame(gridSize: widget.gridSize);
     _game.shuffle();
+    _stopwatch.start();
+  }
+
+  void _checkWin() {
+    if (_game.isSolved()) {
+      _stopwatch.stop();
+      _showWinDialog();
+    }
+  }
+
+  void _showWinDialog() {
+    final duration = _stopwatch.elapsed;
+    final minutes = duration.inMinutes;
+    final seconds = duration.inSeconds % 60;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text('Bravo!'),
+        content: Text('You won!\nIt took you $minutes min $seconds sec.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              Navigator.pop(context); // Go back to menu
+            },
+            child: const Text('Back to Menu'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close dialog
+              setState(() {
+                _game.shuffle();
+                _stopwatch.reset();
+                _stopwatch.start();
+              });
+            },
+            child: const Text('Play Again'),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildTileContent(PuzzleTile tile, double size, {bool isFeedback = false}) {
@@ -65,6 +109,8 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
             onPressed: () {
               setState(() {
                 _game.shuffle();
+                _stopwatch.reset();
+                _stopwatch.start();
               });
             },
           ),
@@ -91,6 +137,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                     onAccept: (fromIndex) {
                       setState(() {
                         _game.swap(fromIndex, index);
+                        _checkWin();
                       });
                     },
                     builder: (context, candidateData, rejectedData) {

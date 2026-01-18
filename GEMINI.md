@@ -84,3 +84,7 @@ This project is designed to be built **with AI assistance** (vibecode):
 - Debug issues together
 
 Perfect for iterative development with Gemini! 🤖
+
+# You and me
+
+* Let's use `gh` to read/write a GitHub issues. Let's use issues for BIG interactive changes.

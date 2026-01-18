@@ -37,4 +37,13 @@ class PuzzleGame {
     tiles[index1].currentIndex = index1;
     tiles[index2].currentIndex = index2;
   }
+
+  bool isSolved() {
+    for (int i = 0; i < tiles.length; i++) {
+      if (tiles[i].currentIndex != tiles[i].correctIndex) {
+        return false;
+      }
+    }
+    return true;
+  }
 }
