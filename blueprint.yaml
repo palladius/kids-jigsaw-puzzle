@@ -1,0 +1,72 @@
+ricc-app:
+  status: idea
+  app_name: kids-jigsaw-puzzle
+  lang: dart
+  app_description: Interactive jigsaw puzzle game for kids with custom images. Upload
+    family photos or hero pictures, choose difficulty (4x4, 6x6), and solve by tapping/clicking
+    to swap tiles. Adjacent tiles merge automatically!
+  emoji: "\U0001F9E9"
+  owner: ricc@google.com
+  stack:
+  - incubator
+  - flutter
+  - dart
+  - android
+  - mobile
+  - game
+  - kids
+  privacy:
+    code: public
+    app: public
+  maturity: experimental
+features:
+- Custom image upload (family photos, heroes, etc.)
+- Multiple difficulty levels (4x4, 6x6, possibly more)
+- Tile swapping via mouse (desktop) or touch (mobile)
+- Auto-merge adjacent tiles when correctly placed
+- Border removal on merged tiles for seamless look
+- Cross-platform: Android (required), Web, Desktop (bonus)
+requirements:
+  must_have:
+  - Works on Android (PRIMARY)
+  - Touch-friendly UI for kids
+  - Custom image upload/selection
+  - Tile swap mechanism
+  - Adjacent tile detection and merging
+  - Progressive difficulty (4x4, 6x6, etc.)
+  nice_to_have:
+  - Flutter (preferred framework)
+  - Google stack integration (Firebase, Cloud Storage)
+  - Works on web/desktop too
+  - Save progress
+  - Multiple puzzles in progress
+  - Timer/score tracking
+  - Animations for tile swaps
+  - Sound effects
+  - Hints system
+game_mechanics:
+  tile_swapping: Click/tap two tiles to swap positions
+  merging_logic: When two tiles are correctly adjacent (relatively), they merge into
+    one L-shaped or larger tile
+  border_removal: Merged tiles lose their internal borders for seamless appearance
+  win_condition: All tiles merged into complete image
+difficulty:
+  easy: 4x4 grid (16 tiles)
+  medium: 6x6 grid (36 tiles)
+  hard: 8x8 grid (64 tiles) - optional
+  expert: 10x10 grid (100 tiles) - optional
+image_sources:
+- Family photos (kids, parents, pets)
+- Superhero pictures
+- Cartoon characters
+- Nature/animals
+- User's camera roll
+- Pre-loaded sample images
+suggested_tech:
+  framework: Flutter
+  language: Dart
+  platforms: Android (required), iOS, Web, Desktop (bonus)
+  backend: Firebase (optional, for image storage/sharing)
+  storage: Google Cloud Storage or Firebase Storage
+  state_management: Riverpod or Provider
+  image_handling: image_picker package
