@@ -9,6 +9,9 @@ run-linux:
 run-mac:
     flutter run -d macos
 
+run-ios:
+    flutter run -d ios
+
 # Build the app for Linux
 build-linux:
     flutter build linux
@@ -26,6 +29,14 @@ build-macos:
 # Build the app for Windows
 build-windows:
     flutter build windows
+
+# Build the app for iOS
+build-ios:
+    flutter build ios --no-codesign
+
+# Open iOS Simulator
+open-simulator:
+    open -a Simulator
 
 # Build the app for Android (APK)
 build-android:

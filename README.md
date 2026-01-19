@@ -6,6 +6,14 @@
 
 * [App on GH PAGES](https://palladius.github.io/kids-jigsaw-puzzle/)
 
+## ✅ Tested Platforms
+
+* [x] 🍎 **macOS** (v1.1.5)
+* [x] 🐧 **Linux**
+* [x] 🌐 **Web**
+* [ ] 🤖 **Android**
+* [ ] 📱 **iOS** ([How to install on iPhone](doc/how-to-install-on-iphone.md))
+* [ ] 🪟 **Windows**
 
 ![Example image of Ricc kids](image.png)
 
