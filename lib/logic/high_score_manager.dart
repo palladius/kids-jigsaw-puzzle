@@ -46,13 +46,32 @@ class HighScoreManager {
     return (base * timeFactor).toInt();
   }
 
-  static Future<void> saveScore(HighScore score) async {
+  static Future<void> saveScore(HighScore newScore) async {
     final prefs = await SharedPreferences.getInstance();
     final List<HighScore> scores = await getScores();
-    scores.add(score);
+    
+    // Find if this player already has a score
+    final existingIndex = scores.indexWhere(
+      (s) => s.name.toLowerCase() == newScore.name.toLowerCase()
+    );
+
+    if (existingIndex != -1) {
+      // Only update if the new score is higher
+      if (newScore.score > scores[existingIndex].score) {
+        scores[existingIndex] = newScore;
+      } else {
+        // New score is not better, don't save anything
+        return;
+      }
+    } else {
+      // New player, add them
+      scores.add(newScore);
+    }
+
+    // Sort by score descending
     scores.sort((a, b) => b.score.compareTo(a.score));
     
-    // Keep only top 10
+    // Keep only top 10 unique players
     final topScores = scores.take(10).toList();
     
     final String encoded = jsonEncode(topScores.map((s) => s.toJson()).toList());

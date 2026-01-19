@@ -354,7 +354,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Text(
-                      'Kids Jigsaw Puzzle v1.1.0+11',
+                      'Kids Jigsaw Puzzle v1.1.1+12',
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],

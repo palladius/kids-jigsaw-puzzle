@@ -2,6 +2,11 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.1+12
+
+- 🏆 **Unique High Scores**: The Hall of Fame now only keeps the **best score per player** (case-insensitive). No more clogging the leaderboard with multiple entries from the same person!
+- 🏷️ **Version Sync**: Bumped version to v1.1.1+12.
+
 ## 1.1.0+11
 
 - ⌨️ **Name Autocomplete**: The win dialog now suggests names already in the Hall of Fame (case-insensitive) to prevent typos.
