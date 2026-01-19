@@ -10,9 +10,20 @@ run-linux:
 build-linux:
     flutter build linux
 
+# Build the app for macOS
+build-macos:
+    flutter build macos
+
+# Build the app for Windows
+build-windows:
+    flutter build windows
+
 # Build the app for Android (APK)
 build-android:
     flutter build apk
+
+build-all: build-linux build-macos build-windows build-android
+    @echo "Building all arhitecture available: Linux, macOS, Windows, Android"
 
 # Run tests
 test:

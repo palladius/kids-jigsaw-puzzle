@@ -2,6 +2,13 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.3+14
+
+- 🖼️ **Image Selector**: Added a horizontal image selector to the Main Menu.
+- 🎲 **Random Default**: Defaults to "Random" but allows choosing a specific image.
+- 🔍 **Zoomed Thumbnails**: Thumbnails show a zoomed-in portion of the image to keep the puzzle challenging.
+- 🏷️ **Version Sync**: Bumped version to v1.1.3+14.
+
 ## 1.1.2+13
 
 - 🛠️ **Justfile Fix**: Restored accidentally deleted commands and added `print-hall-of-fame`.

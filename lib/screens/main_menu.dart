@@ -3,9 +3,14 @@ import 'package:flutter/material.dart';
 import 'puzzle_board.dart';
 import 'leaderboard_screen.dart';
 
-class MainMenu extends StatelessWidget {
+class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
 
+  @override
+  State<MainMenu> createState() => _MainMenuState();
+}
+
+class _MainMenuState extends State<MainMenu> {
   static const List<String> _images = [
     'assets/images/ale-seby-ski.png',
     'assets/images/ale-seby-xmas-cropped.png',
@@ -15,7 +20,10 @@ class MainMenu extends StatelessWidget {
     'assets/images/arca-di-noe-torta-compleanno.png',
   ];
 
-  String _getRandomImage() {
+  String? _selectedImagePath; // null means random
+
+  String _getEffectiveImage() {
+    if (_selectedImagePath != null) return _selectedImagePath!;
     return _images[Random().nextInt(_images.length)];
   }
 
@@ -29,6 +37,7 @@ class MainMenu extends StatelessWidget {
       ),
       body: Center(
         child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(vertical: 40),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -36,6 +45,23 @@ class MainMenu extends StatelessWidget {
                 'Welcome!',
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 30),
+              
+              // Image Selector Section
+              const Text('Select Image:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+              const SizedBox(height: 10),
+              SizedBox(
+                height: 120,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  children: [
+                    _buildImageThumbnail(null, 'Random'),
+                    ..._images.map((path) => _buildImageThumbnail(path, path.split('/').last.split('.').first)),
+                  ],
+                ),
+              ),
+              
               const SizedBox(height: 40),
               if (isDebug) ...[
                 _buildDifficultyButton(context, 'DEBUG (2x2)', 2),
@@ -70,6 +96,56 @@ class MainMenu extends StatelessWidget {
     );
   }
 
+  Widget _buildImageThumbnail(String? path, String label) {
+    final isSelected = _selectedImagePath == path;
+    return GestureDetector(
+      onTap: () => setState(() => _selectedImagePath = path),
+      child: Container(
+        width: 100,
+        margin: const EdgeInsets.symmetric(horizontal: 8),
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: isSelected ? Colors.blue : Colors.grey.shade300,
+            width: isSelected ? 3 : 1,
+          ),
+          borderRadius: BorderRadius.circular(8),
+          color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.white,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
+                child: path == null
+                    ? const Icon(Icons.casino, size: 40, color: Colors.grey)
+                    : OverflowBox(
+                        maxWidth: 200,
+                        maxHeight: 200,
+                        child: Image.asset(
+                          path,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Text(
+                label,
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildDifficultyButton(BuildContext context, String label, int gridSize) {
     return ElevatedButton(
       onPressed: () {
@@ -78,7 +154,7 @@ class MainMenu extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => PuzzleBoard(
               gridSize: gridSize,
-              imagePath: _getRandomImage(),
+              imagePath: _getEffectiveImage(),
             ),
           ),
         );
