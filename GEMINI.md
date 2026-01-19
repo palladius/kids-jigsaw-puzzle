@@ -36,13 +36,13 @@ An interactive jigsaw puzzle where:
 ## 📋 TODO
 
 ### Phase 1: MVP
-- [ ] Set up Flutter project
-- [ ] Design basic UI mockups
-- [ ] Implement image selection (gallery)
-- [ ] Implement 4x4 grid
-- [ ] Implement tile swapping
-- [ ] Implement merge detection logic
-- [ ] Implement border removal on merge
+- [x] Set up Flutter project
+- [x] Design basic UI mockups
+- [x] Implement image selection (gallery)
+- [x] Implement 4x4 grid
+- [x] Implement tile swapping
+- [x] Implement merge detection logic
+- [x] Implement border removal on merge
 - [ ] Test on Android device
 
 ### Phase 2: Polish
@@ -88,3 +88,12 @@ Perfect for iterative development with Gemini! 🤖
 # You and me
 
 * Let's use `gh` to read/write a GitHub issues. Let's use issues for BIG interactive changes.
+
+
+## Feedback Loop
+
+when you land some critical feature or bug fix, make sure to:
+* bump version by 0.0.1
+* update CHANGELOG.md
+* `git commit` with gitmoji
+* If unsure, ask user if this is ok.
