@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'puzzle_board.dart';
 import 'leaderboard_screen.dart';
@@ -18,6 +19,11 @@ class _MainMenuState extends State<MainMenu> {
     'assets/images/family-pijama-estensi.png',
     'assets/images/aj-with-giraffe.png',
     'assets/images/arca-di-noe-torta-compleanno.png',
+    'assets/images/gdg-zurich-jan26.png',
+    'assets/images/aj-megapuzzle.png',
+    'assets/images/seby-puzzle.png',
+    'assets/images/logo.png',
+    'assets/images/family-xmas-presents.png',
   ];
 
   String? _selectedImagePath; // null means random
@@ -52,13 +58,22 @@ class _MainMenuState extends State<MainMenu> {
               const SizedBox(height: 10),
               SizedBox(
                 height: 120,
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: [
-                    _buildImageThumbnail(null, 'Random'),
-                    ..._images.map((path) => _buildImageThumbnail(path, path.split('/').last.split('.').first)),
-                  ],
+                child: ScrollConfiguration(
+                  behavior: ScrollConfiguration.of(context).copyWith(
+                    dragDevices: {
+                      PointerDeviceKind.touch,
+                      PointerDeviceKind.mouse,
+                      PointerDeviceKind.trackpad,
+                    },
+                  ),
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    children: [
+                      _buildImageThumbnail(null, 'Random'),
+                      ..._images.map((path) => _buildImageThumbnail(path, path.split('/').last.split('.').first)),
+                    ],
+                  ),
                 ),
               ),
               

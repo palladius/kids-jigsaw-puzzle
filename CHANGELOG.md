@@ -2,6 +2,11 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.4+15
+
+- 🖱️ **Desktop Scrolling**: Enabled mouse-drag scrolling for the image selector. You can now click and drag to scroll through all 11 images on Linux/Desktop.
+- 🏷️ **Version Sync**: Bumped version to v1.1.4+15.
+
 ## 1.1.3+14
 
 - 🖼️ **Image Selector**: Added a horizontal image selector to the Main Menu.
