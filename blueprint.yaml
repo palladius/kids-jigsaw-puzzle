@@ -23,7 +23,7 @@ ricc-app:
     app: public
   maturity: experimental
   code_url: git@github.com:palladius/kids-jigsaw-puzzle.git
-  repo_image: .grid-image.png
+  repo_image: grid-image.png
   tags:
   - grid-nb-image
 features:

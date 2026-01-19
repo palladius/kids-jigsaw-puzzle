@@ -1,10 +1,9 @@
 # 🧩 Kids Jigsaw Puzzle Game
 
-![Grid Logo](.grid-image.png)
+![Grid Logo](grid-image.png)
 
 > **Goal**: Create an interactive jigsaw puzzle game for kids where they can use their own photos (family, heroes, etc.) and solve puzzles by swapping tiles. Adjacent correct tiles merge automatically!
 
-![Example image of Ricc kids](image.png)
 
 ## 🎯 Objectives
 
@@ -295,3 +294,5 @@ bool areCorrectlyPlaced(Tile t1, Tile t2) {
 **Owner**: Riccardo (ricc@google.com)  
 **Target Audience**: Kids (ages 4-12)  
 **Primary Platform**: Android 📱
+
+![Example image of Ricc kids](image.png)
