@@ -2,6 +2,12 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.0.4+5
+
+- 🛡️ **Robustness Fix**: Improved tile tracking during dragging by using `correctIndex` (unique ID) instead of grid positions. This fixes the "white tiles" (stuck grey boxes) issue.
+- 🧪 **Sanity Checks**: Added a runtime check to `moveIsland` to prevent any move that would result in duplicate tiles.
+- 🔑 **Stable Keys**: Re-implemented `ValueKey` on individual tiles for better Flutter reconciliation.
+
 ## 1.0.3+4
 
 - 🔄 **Full Repaint**: Forced a full grid repaint on every move using a global key strategy to ensure all borders (including neighbors) are updated correctly.

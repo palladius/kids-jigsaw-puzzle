@@ -14,7 +14,7 @@ class PuzzleBoard extends StatefulWidget {
 class _PuzzleBoardState extends State<PuzzleBoard> {
   late PuzzleGame _game;
   final Stopwatch _stopwatch = Stopwatch();
-  Set<int> _draggedIndices = {};
+  Set<int> _draggedTileIds = {};
   int _moveCount = 0;
 
   @override
@@ -157,20 +157,23 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                 child: AspectRatio(
                   aspectRatio: 1.0,
                   child: GridView.builder(
-                    key: ValueKey('grid-$_moveCount'), // Force full rebuild on every move
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: widget.gridSize * widget.gridSize,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: widget.gridSize,
                     ),
                     itemBuilder: (context, index) {
-                      if (_draggedIndices.contains(index)) {
+                      final tile = _game.tiles[index];
+                      
+                      if (_draggedTileIds.contains(tile.correctIndex)) {
                         return Container(
+                          key: ValueKey('placeholder-${tile.correctIndex}'),
                           color: Colors.grey.withOpacity(0.2),
                         );
                       }
 
                       return LayoutBuilder(
+                        key: ValueKey('tile-${tile.correctIndex}'),
                         builder: (context, constraints) {
                           final size = constraints.maxWidth;
 
@@ -192,12 +195,13 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                                 data: index,
                                 onDragStarted: () {
                                   setState(() {
-                                    _draggedIndices = _game.getIsland(index);
+                                    final island = _game.getIsland(index);
+                                    _draggedTileIds = island.map((i) => _game.tiles[i].correctIndex).toSet();
                                   });
                                 },
                                 onDragEnd: (details) {
                                   setState(() {
-                                    _draggedIndices = {};
+                                    _draggedTileIds = {};
                                   });
                                 },
                                 feedback: Builder(
@@ -252,7 +256,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: const [
                 Text(
-                  'Kids Jigsaw Puzzle v1.0.3+4',
+                  'Kids Jigsaw Puzzle v1.0.4+5',
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],

@@ -148,7 +148,6 @@ class PuzzleGame {
     // Identify indices that are being vacated and are NOT receiving a tile from the island
     final vacatedIndices = sourceSet.difference(targetSet).toList()..sort();
     
-    // Sanity check: The number of displaced tiles must match the number of vacated spots
     if (displacedIndices.length != vacatedIndices.length) {
       return false;
     }
@@ -166,6 +165,15 @@ class PuzzleGame {
       final source = displacedIndices[i];
       final target = vacatedIndices[i];
       newTiles[target] = tiles[source].copyWith(currentIndex: target);
+    }
+    
+    // Sanity check: Ensure no duplicates
+    final seen = <int>{};
+    for (final t in newTiles) {
+      if (!seen.add(t.correctIndex)) {
+        // If we found a duplicate, abort the move
+        return false;
+      }
     }
     
     tiles = newTiles;
