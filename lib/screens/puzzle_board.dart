@@ -15,6 +15,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
   late PuzzleGame _game;
   final Stopwatch _stopwatch = Stopwatch();
   Set<int> _draggedIndices = {};
+  int _moveCount = 0;
 
   @override
   void initState() {
@@ -55,6 +56,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
               Navigator.pop(context); // Close dialog
               setState(() {
                 _game.shuffle();
+                _moveCount++;
                 _stopwatch.reset();
                 _stopwatch.start();
               });
@@ -138,6 +140,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
             onPressed: () {
               setState(() {
                 _game.shuffle();
+                _moveCount++;
                 _stopwatch.reset();
                 _stopwatch.start();
               });
@@ -154,23 +157,20 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                 child: AspectRatio(
                   aspectRatio: 1.0,
                   child: GridView.builder(
+                    key: ValueKey('grid-$_moveCount'), // Force full rebuild on every move
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: widget.gridSize * widget.gridSize,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: widget.gridSize,
                     ),
                     itemBuilder: (context, index) {
-                      final tile = _game.tiles[index];
-                      
                       if (_draggedIndices.contains(index)) {
                         return Container(
-                          key: ValueKey('dragged-$index'),
                           color: Colors.grey.withOpacity(0.2),
                         );
                       }
 
                       return LayoutBuilder(
-                        key: ValueKey(tile.correctIndex),
                         builder: (context, constraints) {
                           final size = constraints.maxWidth;
 
@@ -182,6 +182,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                             onAccept: (fromIndex) {
                               setState(() {
                                 if (_game.moveIsland(fromIndex, index)) {
+                                  _moveCount++;
                                   _checkWin();
                                 }
                               });
@@ -251,7 +252,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: const [
                 Text(
-                  'Kids Jigsaw Puzzle v1.0.2+3',
+                  'Kids Jigsaw Puzzle v1.0.3+4',
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],

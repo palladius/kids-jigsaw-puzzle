@@ -1,3 +1,8 @@
+## 1.0.3+4
+
+- 🔄 **Full Repaint**: Forced a full grid repaint on every move using a global key strategy to ensure all borders (including neighbors) are updated correctly.
+- 🏷️ **Version Update**: Bumped version to v1.0.3+4.
+
 ## 1.0.2+3
 
 - 🛡️ **Critical Fix**: Implemented immutable tile state to prevent duplication and reference sharing bugs.
