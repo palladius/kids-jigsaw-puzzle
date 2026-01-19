@@ -22,6 +22,10 @@ build-windows:
 build-android:
     flutter build apk
 
+# Build the app for Web
+build-web:
+    flutter build web --base-href "/kids-jigsaw-puzzle/"
+
 build-all: build-linux build-macos build-windows build-android
     @echo "Building all arhitecture available: Linux, macOS, Windows, Android"
 
