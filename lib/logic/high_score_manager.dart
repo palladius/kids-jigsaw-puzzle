@@ -67,4 +67,9 @@ class HighScoreManager {
     final List<dynamic> decoded = jsonDecode(encoded);
     return decoded.map((item) => HighScore.fromJson(item)).toList();
   }
+
+  static Future<List<String>> getUniqueNames() async {
+    final scores = await getScores();
+    return scores.map((s) => s.name).toSet().toList();
+  }
 }

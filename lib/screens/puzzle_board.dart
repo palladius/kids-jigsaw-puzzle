@@ -50,11 +50,14 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     }
   }
 
-  void _showWinDialog() {
+  void _showWinDialog() async {
     final duration = _stopwatch.elapsed;
     final seconds = duration.inSeconds;
     final score = HighScoreManager.calculateScore(widget.gridSize, seconds);
-    final nameController = TextEditingController();
+    final existingNames = await HighScoreManager.getUniqueNames();
+    String selectedName = '';
+
+    if (!mounted) return;
 
     showDialog(
       context: context,
@@ -64,7 +67,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
         child: Padding(
           padding: const EdgeInsets.only(left: 32.0),
           child: SizedBox(
-            width: 300,
+            width: 350,
             child: AlertDialog(
               title: const Text('🏆 BRAVO!'),
               content: Column(
@@ -76,17 +79,37 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   Text('Score: $score', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.blue)),
                   const SizedBox(height: 16),
                   const Text('Enter your name for the Hall of Fame:'),
-                  TextField(
-                    controller: nameController,
-                    decoration: const InputDecoration(hintText: 'Your Name'),
-                    autofocus: true,
+                  const SizedBox(height: 8),
+                  Autocomplete<String>(
+                    optionsBuilder: (TextEditingValue textEditingValue) {
+                      if (textEditingValue.text.isEmpty) {
+                        return const Iterable<String>.empty();
+                      }
+                      return existingNames.where((String option) {
+                        return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
+                      });
+                    },
+                    onSelected: (String selection) {
+                      selectedName = selection;
+                    },
+                    fieldViewBuilder: (context, textController, focusNode, onFieldSubmitted) {
+                      return TextField(
+                        controller: textController,
+                        focusNode: focusNode,
+                        decoration: const InputDecoration(
+                          hintText: 'Your Name',
+                          border: OutlineInputBorder(),
+                        ),
+                        onChanged: (value) => selectedName = value,
+                      );
+                    },
                   ),
                 ],
               ),
               actions: [
                 TextButton(
                   onPressed: () async {
-                    final name = nameController.text.trim().isEmpty ? 'Anonymous' : nameController.text.trim();
+                    final name = selectedName.trim().isEmpty ? 'Anonymous' : selectedName.trim();
                     await HighScoreManager.saveScore(HighScore(
                       name: name,
                       score: score,
@@ -331,7 +354,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Text(
-                      'Kids Jigsaw Puzzle v1.0.9+10',
+                      'Kids Jigsaw Puzzle v1.1.0+11',
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],

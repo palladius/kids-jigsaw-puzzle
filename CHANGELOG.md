@@ -2,6 +2,11 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.0+11
+
+- ⌨️ **Name Autocomplete**: The win dialog now suggests names already in the Hall of Fame (case-insensitive) to prevent typos.
+- 🏷️ **Version Sync**: Bumped version to v1.1.0+11.
+
 ## 1.0.9+10
 
 - 🏆 **Hall of Fame**: Added a persistent leaderboard! Players can now enter their names after winning.
