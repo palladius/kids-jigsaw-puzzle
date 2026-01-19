@@ -6,10 +6,12 @@ class MainMenu extends StatelessWidget {
   const MainMenu({super.key});
 
   static const List<String> _images = [
-    'sample-images/ale-seby-ski.png',
-    'sample-images/ale-seby-xmas-cropped.png',
-    'sample-images/ale-seby-xmas.png',
-    'sample-images/family-pijama-estensi.png',
+    'assets/images/ale-seby-ski.png',
+    'assets/images/ale-seby-xmas-cropped.png',
+    'assets/images/ale-seby-xmas.png',
+    'assets/images/family-pijama-estensi.png',
+    'assets/images/aj-with-giraffe.png',
+    'assets/images/arca-di-noe-torta-compleanno.png',
   ];
 
   String _getRandomImage() {

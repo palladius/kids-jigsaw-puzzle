@@ -2,6 +2,11 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.0.8+9
+
+- 📂 **Asset Reorganization**: Moved all images from `sample-images/` to the standard Flutter directory `assets/images/`.
+- 🏷️ **Version Sync**: Bumped version to v1.0.8+9.
+
 ## 1.0.7+8
 
 - 🎉 **Win Celebration**: Added fireworks (confetti) when you solve the puzzle!
