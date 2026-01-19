@@ -1,3 +1,7 @@
+# CHANGELOG
+
+Note: version can be ascertained bia `just version`.
+
 ## 1.0.3+4
 
 - 🔄 **Full Repaint**: Forced a full grid repaint on every move using a global key strategy to ensure all borders (including neighbors) are updated correctly.
