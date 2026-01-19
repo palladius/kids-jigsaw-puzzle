@@ -9,7 +9,6 @@ void main() {
       game = PuzzleGame(gridSize: 4); // 4x4 grid
       // Reset to solved state for predictable testing
       for (int i = 0; i < game.tiles.length; i++) {
-        game.tiles[i].currentIndex = i;
         game.tiles[i] = PuzzleTile(correctIndex: i, currentIndex: i);
       }
     });

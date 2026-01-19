@@ -1,8 +1,15 @@
 class PuzzleTile {
   final int correctIndex;
-  int currentIndex;
+  final int currentIndex;
 
   PuzzleTile({required this.correctIndex, required this.currentIndex});
+
+  PuzzleTile copyWith({int? currentIndex}) {
+    return PuzzleTile(
+      correctIndex: correctIndex,
+      currentIndex: currentIndex ?? this.currentIndex,
+    );
+  }
 }
 
 class PuzzleGame {
@@ -24,7 +31,7 @@ class PuzzleGame {
     tiles.shuffle();
     // Update currentIndex for all tiles after shuffle
     for (int i = 0; i < tiles.length; i++) {
-      tiles[i].currentIndex = i;
+      tiles[i] = tiles[i].copyWith(currentIndex: i);
     }
   }
 
@@ -34,8 +41,8 @@ class PuzzleGame {
     tiles[index2] = temp;
     
     // Update currentIndex
-    tiles[index1].currentIndex = index1;
-    tiles[index2].currentIndex = index2;
+    tiles[index1] = tiles[index1].copyWith(currentIndex: index1);
+    tiles[index2] = tiles[index2].copyWith(currentIndex: index2);
   }
 
   bool areTilesConnected(int index1, int index2) {
@@ -57,9 +64,6 @@ class PuzzleGame {
     }
 
     // Check if they SHOULD be adjacent (based on correctIndex)
-    // The difference in correctIndex should match the difference in currentIndex
-    // But we need to be careful about wrapping.
-    // correctIndex is also a grid index.
     final correctRow1 = tile1.correctIndex ~/ gridSize;
     final correctCol1 = tile1.correctIndex % gridSize;
     final correctRow2 = tile2.correctIndex ~/ gridSize;
@@ -146,7 +150,6 @@ class PuzzleGame {
     
     // Sanity check: The number of displaced tiles must match the number of vacated spots
     if (displacedIndices.length != vacatedIndices.length) {
-      // This should theoretically not happen if canMoveIsland checks are correct
       return false;
     }
 
@@ -155,16 +158,14 @@ class PuzzleGame {
     // 1. Move island tiles to their target positions
     for (final idx in sourceSet) {
       final target = idx + offset;
-      newTiles[target] = tiles[idx];
-      newTiles[target].currentIndex = target;
+      newTiles[target] = tiles[idx].copyWith(currentIndex: target);
     }
     
     // 2. Move displaced tiles to vacated positions
     for (int i = 0; i < displacedIndices.length; i++) {
       final source = displacedIndices[i];
       final target = vacatedIndices[i];
-      newTiles[target] = tiles[source];
-      newTiles[target].currentIndex = target;
+      newTiles[target] = tiles[source].copyWith(currentIndex: target);
     }
     
     tiles = newTiles;
