@@ -2,6 +2,12 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.0.5+6
+
+- 🛡️ **Deep Fix**: Resolved the "white tiles" bug by ensuring `Draggable` widgets are never removed from the tree during a drag. This ensures `onDragEnd` is always called to clear the drag state.
+- 📝 **Logging**: Added `debugPrint` statements for drag and move events.
+- 🛠️ **Justfile**: Added `just log-run` to redirect app output to `app.log`.
+
 ## 1.0.4+5
 
 - 🛡️ **Robustness Fix**: Improved tile tracking during dragging by using `correctIndex` (unique ID) instead of grid positions. This fixes the "white tiles" (stuck grey boxes) issue.

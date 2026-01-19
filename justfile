@@ -25,3 +25,7 @@ clean:
 # Show the current version
 version:
     @grep '^version: ' pubspec.yaml | cut -d ' ' -f 2
+
+# Run with logging to a file
+log-run:
+    flutter run -d linux > app.log 2>&1

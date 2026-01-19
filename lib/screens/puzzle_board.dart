@@ -164,13 +164,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                     ),
                     itemBuilder: (context, index) {
                       final tile = _game.tiles[index];
-                      
-                      if (_draggedTileIds.contains(tile.correctIndex)) {
-                        return Container(
-                          key: ValueKey('placeholder-${tile.correctIndex}'),
-                          color: Colors.grey.withOpacity(0.2),
-                        );
-                      }
+                      final isBeingDragged = _draggedTileIds.contains(tile.correctIndex);
 
                       return LayoutBuilder(
                         key: ValueKey('tile-${tile.correctIndex}'),
@@ -180,9 +174,11 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                           return DragTarget<int>(
                             onWillAccept: (data) {
                               if (data == null) return false;
-                              return _game.canMoveIsland(data, index);
+                              final canMove = _game.canMoveIsland(data, index);
+                              return canMove;
                             },
                             onAccept: (fromIndex) {
+                              debugPrint('Accepting move from $fromIndex to $index');
                               setState(() {
                                 if (_game.moveIsland(fromIndex, index)) {
                                   _moveCount++;
@@ -194,12 +190,21 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                               return Draggable<int>(
                                 data: index,
                                 onDragStarted: () {
+                                  debugPrint('Drag started for tile at $index (ID: ${tile.correctIndex})');
                                   setState(() {
                                     final island = _game.getIsland(index);
                                     _draggedTileIds = island.map((i) => _game.tiles[i].correctIndex).toSet();
+                                    debugPrint('Island IDs: $_draggedTileIds');
                                   });
                                 },
                                 onDragEnd: (details) {
+                                  debugPrint('Drag ended for tile at $index');
+                                  setState(() {
+                                    _draggedTileIds = {};
+                                  });
+                                },
+                                onDraggableCanceled: (velocity, offset) {
+                                  debugPrint('Drag canceled for tile at $index');
                                   setState(() {
                                     _draggedTileIds = {};
                                   });
@@ -236,9 +241,17 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                                   }
                                 ),
                                 childWhenDragging: Container(
+                                  width: size,
+                                  height: size,
                                   color: Colors.grey.withOpacity(0.2),
                                 ),
-                                child: _buildTileContent(index, size),
+                                child: isBeingDragged
+                                    ? Container(
+                                        width: size,
+                                        height: size,
+                                        color: Colors.grey.withOpacity(0.2),
+                                      )
+                                    : _buildTileContent(index, size),
                               );
                             },
                           );
