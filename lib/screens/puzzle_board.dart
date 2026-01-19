@@ -180,6 +180,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                             onAccept: (fromIndex) {
                               debugPrint('Accepting move from $fromIndex to $index');
                               setState(() {
+                                _draggedTileIds = {}; // Aggressively clear to prevent "white tiles"
                                 if (_game.moveIsland(fromIndex, index)) {
                                   _moveCount++;
                                   _checkWin();
@@ -205,6 +206,12 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                                 },
                                 onDraggableCanceled: (velocity, offset) {
                                   debugPrint('Drag canceled for tile at $index');
+                                  setState(() {
+                                    _draggedTileIds = {};
+                                  });
+                                },
+                                onDragCompleted: () {
+                                  debugPrint('Drag completed for tile at $index');
                                   setState(() {
                                     _draggedTileIds = {};
                                   });
@@ -269,7 +276,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: const [
                 Text(
-                  'Kids Jigsaw Puzzle v1.0.4+5',
+                  'Kids Jigsaw Puzzle v1.0.6+7',
                   style: TextStyle(color: Colors.grey, fontSize: 12),
                 ),
               ],
