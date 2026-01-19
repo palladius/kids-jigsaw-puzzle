@@ -21,3 +21,7 @@ test:
 # Clean build artifacts
 clean:
     flutter clean
+
+# Show the current version
+version:
+    @grep '^version: ' pubspec.yaml | cut -d ' ' -f 2

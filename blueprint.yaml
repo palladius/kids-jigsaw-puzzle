@@ -9,7 +9,7 @@ ricc-app:
     to swap tiles. Adjacent tiles merge automatically!
   emoji: "\U0001F9E9"
   owner: ricc@google.com
-  version: 0.0.1
+  version: 1.0.3+4
   stack:
   - incubator
   - flutter
