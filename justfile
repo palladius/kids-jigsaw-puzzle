@@ -31,10 +31,12 @@ log-run:
     flutter run -d linux > app.log 2>&1
 
 # Run in debug mode (2x2 grid enabled)
-debug-run:
+debug-run-linux:
     flutter run -d linux --dart-define=GAME_DEBUG=true
 
 # Print the Hall of Fame (Linux only)
 print-hall-of-fame:
-    @echo "🏆 Hall of Fame Data:"
-    @cat ~/.local/share/com.palladius.kids_jigsaw_puzzle/shared_preferences.json | jq . || cat ~/.local/share/com.palladius.kids_jigsaw_puzzle/shared_preferences.json
+    @echo "🏆 Hall of Fame:"
+    @cat ~/.local/share/com.palladius.kids_jigsaw_puzzle/shared_preferences.json | \
+        jq -r '."flutter.high_scores" | fromjson | sort_by(.score) | reverse | ["SCORE","NAME","GRID","TIME"], ["-----","----","----","----"], (.[] | [.score, .name, "\(.gridSize)x\(.gridSize)", "\(.seconds)s"]) | join("|")' | \
+        column -t -s "|" | sed 's/^/  /'
