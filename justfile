@@ -10,6 +10,11 @@ run-linux:
 build-linux:
     flutter build linux
 
+build-magic:
+    uname | grep Darwin && just build-macos 
+    uname | grep Linux && just build-linux
+    uname | grep MINGW64 && just build-windows
+
 # Build the app for macOS
 build-macos:
     flutter build macos
@@ -55,3 +60,9 @@ print-hall-of-fame:
     @cat ~/.local/share/com.palladius.kids_jigsaw_puzzle/shared_preferences.json | \
         jq -r '."flutter.high_scores" | fromjson | sort_by(.score) | reverse | ["SCORE","NAME","GRID","TIME"], ["-----","----","----","----"], (.[] | [.score, .name, "\(.gridSize)x\(.gridSize)", "\(.seconds)s"]) | join("|")' | \
         column -t -s "|" | sed 's/^/  /'
+
+install-mac:
+    brew install flutter cocoapods
+
+setup-mac: install-mac
+    flutter doctor
