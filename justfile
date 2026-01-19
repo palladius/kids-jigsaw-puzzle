@@ -6,6 +6,9 @@ default:
 run-linux:
     flutter run -d linux
 
+run-mac:
+    flutter run -d macos
+
 # Build the app for Linux
 build-linux:
     flutter build linux
@@ -69,5 +72,5 @@ setup-mac: install-mac
     flutter doctor
 
 setup-mac-xcode:
-    sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    @ls -d /Applications/Xcode.app 2>/dev/null && sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer || (ls -d ~/Downloads/Xcode.app 2>/dev/null && sudo xcode-select --switch ~/Downloads/Xcode.app/Contents/Developer) || (echo "❌ Xcode not found in /Applications or ~/Downloads" && exit 1)
     sudo xcodebuild -runFirstLaunch
