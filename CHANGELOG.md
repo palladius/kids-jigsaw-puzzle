@@ -2,6 +2,13 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.0.7+8
+
+- 🎉 **Win Celebration**: Added fireworks (confetti) when you solve the puzzle!
+- 🐞 **Debug Mode**: Added support for `GAME_DEBUG` environment variable. If true, a super easy 2x2 grid option appears in the menu.
+- 🎲 **Image Randomization**: The game now picks a random image from the assets each time you start a new game.
+- 🏷️ **Version Sync**: Bumped version to v1.0.7+8.
+
 ## 1.0.6+7
 
 - 🛡️ **Aggressive State Cleanup**: Added `_draggedTileIds = {}` to `onAccept` and `onDragCompleted` to ensure the grey boxes (white bug) are cleared immediately upon a successful move, even if `onDragEnd` is delayed or missed.

@@ -29,3 +29,7 @@ version:
 # Run with logging to a file
 log-run:
     flutter run -d linux > app.log 2>&1
+
+# Run in debug mode (2x2 grid enabled)
+debug-run:
+    flutter run -d linux --dart-define=GAME_DEBUG=true
