@@ -2,6 +2,13 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.0.9+10
+
+- 🏆 **Hall of Fame**: Added a persistent leaderboard! Players can now enter their names after winning.
+- 🧮 **Exponential Scoring**: Implemented a scoring system that rewards larger grids and faster times (Complexity is $O(N^4)$).
+- 🖼️ **Better View**: Moved the "Bravo" win dialog to the left side of the screen so you can admire your completed puzzle.
+- 🏷️ **Version Sync**: Bumped version to v1.0.9+10.
+
 ## 1.0.8+9
 
 - 📂 **Asset Reorganization**: Moved all images from `sample-images/` to the standard Flutter directory `assets/images/`.

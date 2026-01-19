@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'puzzle_board.dart';
+import 'leaderboard_screen.dart';
 
 class MainMenu extends StatelessWidget {
   const MainMenu({super.key});
@@ -45,6 +46,23 @@ class MainMenu extends StatelessWidget {
               _buildDifficultyButton(context, 'Medium (6x6)', 6),
               const SizedBox(height: 20),
               _buildDifficultyButton(context, 'Hard (8x8)', 8),
+              const SizedBox(height: 40),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const LeaderboardScreen()),
+                  );
+                },
+                icon: const Icon(Icons.emoji_events),
+                label: const Text('Hall of Fame'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  foregroundColor: Colors.black,
+                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                  textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+              ),
             ],
           ),
         ),

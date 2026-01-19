@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 
 import 'package:kids_jigsaw_puzzle/logic/puzzle_logic.dart';
+import 'package:kids_jigsaw_puzzle/logic/high_score_manager.dart';
 
 class PuzzleBoard extends StatefulWidget {
   final int gridSize;
@@ -51,36 +52,71 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
 
   void _showWinDialog() {
     final duration = _stopwatch.elapsed;
-    final minutes = duration.inMinutes;
-    final seconds = duration.inSeconds % 60;
+    final seconds = duration.inSeconds;
+    final score = HighScoreManager.calculateScore(widget.gridSize, seconds);
+    final nameController = TextEditingController();
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        title: const Text('Bravo!'),
-        content: Text('You won!\nIt took you $minutes min $seconds sec.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              Navigator.pop(context); // Go back to menu
-            },
-            child: const Text('Back to Menu'),
+      builder: (context) => Align(
+        alignment: Alignment.centerLeft,
+        child: Padding(
+          padding: const EdgeInsets.only(left: 32.0),
+          child: SizedBox(
+            width: 300,
+            child: AlertDialog(
+              title: const Text('🏆 BRAVO!'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('You solved it in $seconds seconds!'),
+                  const SizedBox(height: 8),
+                  Text('Score: $score', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.blue)),
+                  const SizedBox(height: 16),
+                  const Text('Enter your name for the Hall of Fame:'),
+                  TextField(
+                    controller: nameController,
+                    decoration: const InputDecoration(hintText: 'Your Name'),
+                    autofocus: true,
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    final name = nameController.text.trim().isEmpty ? 'Anonymous' : nameController.text.trim();
+                    await HighScoreManager.saveScore(HighScore(
+                      name: name,
+                      score: score,
+                      gridSize: widget.gridSize,
+                      seconds: seconds,
+                      date: DateTime.now(),
+                    ));
+                    if (mounted) {
+                      Navigator.pop(context); // Close dialog
+                      Navigator.pop(context); // Go back to menu
+                    }
+                  },
+                  child: const Text('Save & Exit'),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context); // Close dialog
+                    setState(() {
+                      _game.shuffle();
+                      _moveCount++;
+                      _stopwatch.reset();
+                      _stopwatch.start();
+                    });
+                  },
+                  child: const Text('Play Again'),
+                ),
+              ],
+            ),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context); // Close dialog
-              setState(() {
-                _game.shuffle();
-                _moveCount++;
-                _stopwatch.reset();
-                _stopwatch.start();
-              });
-            },
-            child: const Text('Play Again'),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -295,7 +331,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Text(
-                      'Kids Jigsaw Puzzle v1.0.8+9',
+                      'Kids Jigsaw Puzzle v1.0.9+10',
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
