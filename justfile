@@ -17,6 +17,7 @@ build-magic:
 
 # Build the app for macOS
 build-macos:
+    @xcode-select -p | grep -q "Xcode.app" || (echo "❌ ERROR: Full Xcode is NOT installed or NOT active." && echo "Current path: $(xcode-select -p)" && echo "Please install Xcode from the App Store and run: 'just setup-mac-xcode'" && exit 1)
     flutter build macos
 
 # Build the app for Windows
@@ -66,3 +67,7 @@ install-mac:
 
 setup-mac: install-mac
     flutter doctor
+
+setup-mac-xcode:
+    sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+    sudo xcodebuild -runFirstLaunch

@@ -1,6 +1,13 @@
 # CHANGELOG
 
 Note: version can be ascertained bia `just version`.
+## 1.1.5+16
+
+- 🍎 **Mac Build Stabilized**: Fixed `pubspec.yaml` dependency conflicts (`cupertino_icons` and `shared_preferences`).
+- 📦 **Dependencies**: Updated `intl`, `confetti`, and `shared_preferences` to latest compatible versions.
+- 🛠️ **Justfile**: Added `install-mac` and `setup-mac` recipes for easier environment setup.
+- 📖 **Docs Refactor**: Slimmed down `README.md` and moved detailed specifications to `SPECS.md`.
+- 🏷️ **Version Sync**: Bumped version to v1.1.5+16.
 
 ## 1.1.4+15
 
