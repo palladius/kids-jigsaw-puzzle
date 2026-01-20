@@ -343,7 +343,7 @@ avV(a){var s,r,q=a.graphemeLayoutBounds,p=B.b.dt(q,t.i)
 q=p.a
 s=J.bp(q)
 r=p.$ti.y[1]
-return new A.oc(new A.t(r.a(s.h(q,0)),r.a(s.h(q,1)),r.a(s.h(q,2)),r.a(s.h(q,3))),new A.bD(J.aa(a.graphemeClusterTextRange.start),J.aa(a.graphemeClusterTextRange.end)),B.jO[J.aa(a.dir.value)])},
+return new A.oc(new A.t(r.a(s.h(q,0)),r.a(s.h(q,1)),r.a(s.h(q,2)),r.a(s.h(q,3))),new A.bD(J.aa(a.graphemeClusterTextRange.start),J.aa(a.graphemeClusterTextRange.end)),B.jP[J.aa(a.dir.value)])},
 aMB(a){var s,r="chromium/canvaskit.js"
 switch(a.a){case 0:s=A.c([],t.s)
 if(A.ayq())s.push(r)
@@ -16183,7 +16183,7 @@ _.dx=$},
 Dk:function Dk(){},
 Sc:function Sc(){},
 avA(a,b){var s,r,q,p,o,n,m,l,k,j,i,h,g,f
-if(a==null)a=B.jP
+if(a==null)a=B.jQ
 s=J.bp(a)
 r=s.gF(a)-1
 q=A.bj(0,null,!1,t.LQ)
@@ -16360,7 +16360,7 @@ r.gGw()
 q.sGw(r.gGw())
 r.gGu()
 q.sGu(r.gGu())
-s.l5(B.jP,q)
+s.l5(B.jQ,q)
 s.sba(b.gba())
 s.sbP(b.gbP())
 s.dy=b.gaoK()
@@ -27169,7 +27169,7 @@ Ik(a){var s,r,q,p,o,n,m,l=A.c([],t.Lx)
 for(s=a.a,r=J.bp(s),q=a.$ti.y[1],p=0;p<r.gF(s);++p){o=q.a(r.h(s,p))
 n=o.rect
 m=J.aa(o.dir.value)
-l.push(new A.eA(n[0],n[1],n[2],n[3],B.jO[m]))}return l},
+l.push(new A.eA(n[0],n[1],n[2],n[3],B.jP[m]))}return l},
 cW(a){var s,r,q=this.a
 q===$&&A.a()
 s=q.a.getGlyphPositionAtCoordinate(a.a,a.b)
@@ -33410,7 +33410,7 @@ m=A.fz(s.h(0,"fontWeightIndex"))
 l=m!=null?A.aMw(m):"normal"
 r=A.aro(s.h(0,"fontSize"))
 if(r==null)r=null
-p=new A.acI(new A.a_n(r,l,A.cq(s.h(0,"fontFamily")),B.Ho[o],B.jO[n]))
+p=new A.acI(new A.a_n(r,l,A.cq(s.h(0,"fontFamily")),B.Ho[o],B.jP[n]))
 break
 case"TextInput.clearClient":p=B.Bd
 break
@@ -62472,7 +62472,7 @@ s.N=b.bI
 s.R=b.bl
 s.n=b.bi
 s.CW=b.c
-s.abj(a==null?B.jP:a)},
+s.abj(a==null?B.jQ:a)},
 VI(a){return this.l5(null,a)},
 Wh(){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c,b,a,a0,a1,a2,a3,a4,a5,a6=this,a7={}
 a7.a=a6.fr
@@ -77696,7 +77696,7 @@ grQ(){return A.aNl()},
 a6L(){if(this.x)return
 this.wz()},
 Wg(){var s,r,q,p,o,n,m,l,k,j,i,h,g,f,e,d,c=this,b=null,a=c.c
-if(a===-1||c.d===-1||c.b.length===0)return new A.mx(b,b,B.ch,B.jQ,c.b.length!==0)
+if(a===-1||c.d===-1||c.b.length===0)return new A.mx(b,b,B.ch,B.jR,c.b.length!==0)
 if(!c.as){a=c.Jq(c.d,a)
 c.d=a
 c.c=c.Jq(c.c,a)}s=c.b[c.d].gt()
@@ -81346,10 +81346,10 @@ return A.aqG(l,A.jM(A.aHj(A.nJ(j,B.aW,B.h4,B.cf),B.F0),m,m))},
 B_(a,b,c){var s=null,r=A.a_y(s,s,s,s,s,s,s,s,s,s,s,s,B.Ff,s,s,s,s,s,B.SI,s)
 return A.aE9(!1,A.dO(b,s,s,s,s,s,s),s,s,s,s,s,s,new A.aiw(this,a,c),s,r)}}
 A.aix.prototype={
-$0(){this.a.d=B.jS[B.d2.pM(58)]},
+$0(){this.a.d=B.jO[B.d2.pM(58)]},
 $S:0}
 A.aiA.prototype={
-$1(a){return new A.oh(B.jS,new A.aiz(this.a,a),null)},
+$1(a){return new A.oh(B.jO,new A.aiz(this.a,a),null)},
 $S:519}
 A.aiz.prototype={
 $1(a){var s=this.a
@@ -81375,7 +81375,7 @@ A.j2(this.b,!1).mc(s)},
 $S:0}
 A.aiv.prototype={
 $1(a){var s=this.a.d
-if(s==null)s=B.jS[B.d2.pM(58)]
+if(s==null)s=B.jO[B.d2.pM(58)]
 return new A.p2(this.b,s,null)},
 $S:521}
 A.oh.prototype={
@@ -86360,6 +86360,7 @@ B.zD=new A.DI(1,"anonymous")
 B.Hd=s([B.lc,B.zD],A.ap("A<DI>"))
 B.nw=s(["January","February","March","April","May","June","July","August","September","October","November","December"],t.s)
 B.nx=s([0,4,12,1,5,13,3,7,15],t.t)
+B.jO=s(["assets/images/ale-animale-mexico-cool.png","assets/images/ale-bici-meilen.png","assets/images/ale-gondola.png","assets/images/ale-maglietta-ele.png","assets/images/ale-megapuzzle.png","assets/images/ale-papa-mexico-pool.png","assets/images/ale-pupurabbu.png","assets/images/ale-seby-android.png","assets/images/ale-seby-bordo-colorato.png","assets/images/ale-seby-google-chess3.png","assets/images/ale-seby-google-logo.png","assets/images/ale-seby-halloween.png","assets/images/ale-seby-kate-argenta-ele-jc.png","assets/images/ale-seby-kate-venezia.png","assets/images/ale-seby-lederhosen-g.png","assets/images/ale-seby-mexico.png","assets/images/ale-seby-palla-bici.png","assets/images/ale-seby-piramide-uxmal.png","assets/images/ale-seby-scacchi-locarno.png","assets/images/ale-seby-scemi-tulum.png","assets/images/ale-seby-ski.png","assets/images/ale-seby-slitta.png","assets/images/ale-seby-tandem-wow.png","assets/images/ale-seby-train.png","assets/images/ale-seby-tulum.png","assets/images/ale-seby-uxmal.png","assets/images/ale-seby-xmas-cropped.png","assets/images/ale-seby-xmas.png","assets/images/ale-spiaggia-mexico.png","assets/images/ale-tieffenbrunnen.png","assets/images/ale-with-giraffe.png","assets/images/ale-xmas-jumper.png","assets/images/arca-di-noe-torta-compleanno.png","assets/images/comacchio-3ponti.png","assets/images/family-in-tulum.png","assets/images/family-pijama-estensi.png","assets/images/family-santa-2024.png","assets/images/family-silvester-lauf.png","assets/images/family-xmas-presents.png","assets/images/gdg-zurich-jan26.png","assets/images/logo.png","assets/images/lucy-bimbi-ikea.png","assets/images/lucy-kate-ale-rialto.png","assets/images/lucy-seby-estate-inverno.png","assets/images/lucy-venezia-kate-bimbi-rialto.png","assets/images/pupurabbu.png","assets/images/puzzle-42.png","assets/images/reindeers-in-stadelhofen.png","assets/images/reindeers-polar-express.png","assets/images/ricc-ale-seby-rubycon.png","assets/images/ricc-bimbi-lugano.png","assets/images/ricc-lucy-albero-lde.png","assets/images/seby-in-space.png","assets/images/seby-palla-di-natale.png","assets/images/seby-puzzle.png","assets/images/seby-sgarrupato.png","assets/images/seby-ski-italy.png","assets/images/zurich-tram4.png"],t.s)
 B.WJ=new A.fv(0,1)
 B.WO=new A.fv(0.5,1)
 B.WR=new A.fv(0.5375,0.75)
@@ -86431,7 +86432,7 @@ B.a8=new A.AP(0,"upstream")
 B.HM=s([B.a8,B.j],A.ap("A<AP>"))
 B.aE=new A.AT(0,"rtl")
 B.ae=new A.AT(1,"ltr")
-B.jO=s([B.aE,B.ae],A.ap("A<AT>"))
+B.jP=s([B.aE,B.ae],A.ap("A<AT>"))
 B.S1=new A.l(!0,B.bU,null,null,null,null,12,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null)
 B.UL=new A.dN("Kids Jigsaw Puzzle v1.1.2+13",null,B.S1,null,null,null,null,null,null)
 B.HN=s([B.UL],t.E)
@@ -86540,9 +86541,9 @@ B.I7=s([],t.tc)
 B.fV=s([],t.jl)
 B.I9=s([],t.wi)
 B.I8=s([],A.ap("A<av6<@>>"))
-B.jQ=s([],t.AO)
+B.jR=s([],t.AO)
 B.I6=s([],t.D1)
-B.jP=s([],t.QF)
+B.jQ=s([],t.QF)
 B.Ic=s([],t.Lx)
 B.Ih=s([],t.fm)
 B.XU=s([],t.E)
@@ -86577,10 +86578,9 @@ B.kb=new A.fS(7,"functionModifier")
 B.tT=new A.fS(8,"symbolModifier")
 B.nJ=s([B.dl,B.dm,B.dn,B.dp,B.k8,B.k9,B.ka,B.kb,B.tT],A.ap("A<fS>"))
 B.Ix=s(["1st quarter","2nd quarter","3rd quarter","4th quarter"],t.s)
-B.jR=s([!0,!1],t.HZ)
+B.jS=s([!0,!1],t.HZ)
 B.Iz=s(["pointerdown","pointermove","pointerleave","pointerup","pointercancel","touchstart","touchend","touchmove","touchcancel","mousedown","mousemove","mouseleave","mouseup","wheel"],t.s)
 B.IA=s(["Before Christ","Anno Domini"],t.s)
-B.jS=s(["assets/images/aj-megapuzzle.png","assets/images/aj-with-giraffe.png","assets/images/ale-animale-mexico-cool.png","assets/images/ale-bici-meilen.png","assets/images/ale-gondola.png","assets/images/ale-maglietta-ele.png","assets/images/ale-papa-mexico-pool.png","assets/images/ale-pupurabbu.png","assets/images/ale-seby-android.png","assets/images/ale-seby-bordo-colorato.png","assets/images/ale-seby-google-chess3.png","assets/images/ale-seby-google-logo.png","assets/images/ale-seby-halloween.png","assets/images/ale-seby-kate-argenta-ele-jc.png","assets/images/ale-seby-kate-venezia.png","assets/images/ale-seby-lederhosen-g.png","assets/images/ale-seby-mexico.png","assets/images/ale-seby-palla-bici.png","assets/images/ale-seby-piramide-uxmal.png","assets/images/ale-seby-scacchi-locarno.png","assets/images/ale-seby-scemi-tulum.png","assets/images/ale-seby-ski.png","assets/images/ale-seby-slitta.png","assets/images/ale-seby-tandem-wow.png","assets/images/ale-seby-train.png","assets/images/ale-seby-tulum.png","assets/images/ale-seby-uxmal.png","assets/images/ale-seby-xmas-cropped.png","assets/images/ale-seby-xmas.png","assets/images/ale-spiaggia-mexico.png","assets/images/ale-tieffenbrunnen.png","assets/images/ale-xmas-jumper.png","assets/images/arca-di-noe-torta-compleanno.png","assets/images/comacchio-3ponti.png","assets/images/family-in-tulum.png","assets/images/family-pijama-estensi.png","assets/images/family-santa-2024.png","assets/images/family-silvester-lauf.png","assets/images/family-xmas-presents.png","assets/images/gdg-zurich-jan26.png","assets/images/logo.png","assets/images/lucy-bimbi-ikea.png","assets/images/lucy-kate-ale-rialto.png","assets/images/lucy-seby-estate-inverno.png","assets/images/lucy-venezia-kate-bimbi-rialto.png","assets/images/pupurabbu.png","assets/images/puzzle-42.png","assets/images/reindeers-in-stadelhofen.png","assets/images/reindeers-polar-express.png","assets/images/ricc-ale-seby-rubycon.png","assets/images/ricc-bimbi-lugano.png","assets/images/ricc-lucy-albero-lde.png","assets/images/seby-in-space.png","assets/images/seby-palla-di-natale.png","assets/images/seby-puzzle.png","assets/images/seby-sgarrupato.png","assets/images/seby-ski-italy.png","assets/images/zurich-tram4.png"],t.s)
 B.m=new A.yh(0,"ignored")
 B.aC=new A.e(4294967304)
 B.ep=new A.e(4294967323)
@@ -87725,8 +87725,8 @@ B.kr=new A.tf(1,"nextLine")
 B.ht=new A.tf(2,"forward")
 B.hu=new A.tf(3,"backward")
 B.ch=new A.A6(2,"none")
-B.xU=new A.mx(null,null,B.ch,B.jQ,!0)
-B.xV=new A.mx(null,null,B.ch,B.jQ,!1)
+B.xU=new A.mx(null,null,B.ch,B.jR,!0)
+B.xV=new A.mx(null,null,B.ch,B.jR,!1)
 B.x=new A.my(0,"next")
 B.B=new A.my(1,"previous")
 B.F=new A.my(2,"end")
@@ -88961,7 +88961,7 @@ return q})
 r($,"aQ1","aAo",()=>{var q=A.ap("~(aQ<aB>)")
 return A.ay([B.Vd,A.atE(!0),B.UY,A.atE(!1),B.VC,new A.L3(A.yQ(q)),B.Vt,new A.JG(A.yQ(q)),B.Vx,new A.Kh(A.yQ(q)),B.z8,new A.wU(!1,A.yQ(q)),B.kY,A.aGY(),B.Vy,new A.Km(A.yQ(q)),B.VS,new A.N5(A.yQ(q))],t.u,t.od)})
 s($,"aNT","aoT",()=>{var q,p,o,n=t.v,m=A.r(t.Vz,n)
-for(q=A.ap("a2"),p=0;p<2;++p){o=B.jR[p]
+for(q=A.ap("a2"),p=0;p<2;++p){o=B.jS[p]
 m.a_(0,A.ay([A.dL(B.aC,!1,!1,!1,o),B.iV,A.dL(B.aC,!1,!0,!1,o),B.iY,A.dL(B.aC,!0,!1,!1,o),B.iW,A.dL(B.ax,!1,!1,!1,o),B.ea,A.dL(B.ax,!1,!0,!1,o),B.eb,A.dL(B.ax,!0,!1,!1,o),B.iX],q,n))}m.m(0,B.hF,B.dc)
 m.m(0,B.hG,B.dd)
 m.m(0,B.eO,B.dg)
@@ -89021,7 +89021,7 @@ q.m(0,B.kD,B.fE)
 q.m(0,B.kE,B.fF)
 return q})
 s($,"aNZ","as9",()=>{var q,p,o,n=t.v,m=A.r(t.Vz,n)
-for(q=A.ap("a2"),p=0;p<2;++p){o=B.jR[p]
+for(q=A.ap("a2"),p=0;p<2;++p){o=B.jS[p]
 m.a_(0,A.ay([A.dL(B.aC,!1,!1,!1,o),B.iV,A.dL(B.aC,!0,!1,!1,o),B.iY,A.dL(B.aC,!1,!1,!0,o),B.iW,A.dL(B.ax,!1,!1,!1,o),B.ea,A.dL(B.ax,!0,!1,!1,o),B.eb,A.dL(B.ax,!1,!1,!0,o),B.iX],q,n))}m.m(0,B.hF,B.dc)
 m.m(0,B.hG,B.dd)
 m.m(0,B.eO,B.dg)
@@ -89084,7 +89084,7 @@ q.m(0,B.kD,B.fE)
 q.m(0,B.kE,B.fF)
 return q})
 s($,"aO_","asa",()=>{var q,p,o,n=t.v,m=A.r(t.Vz,n)
-for(q=A.ap("a2"),p=0;p<2;++p){o=B.jR[p]
+for(q=A.ap("a2"),p=0;p<2;++p){o=B.jS[p]
 m.a_(0,A.ay([A.dL(B.aC,!1,!1,!1,o),B.o,A.dL(B.ax,!1,!1,!1,o),B.o,A.dL(B.aC,!0,!1,!1,o),B.o,A.dL(B.ax,!0,!1,!1,o),B.o,A.dL(B.aC,!1,!0,!1,o),B.o,A.dL(B.ax,!1,!0,!1,o),B.o,A.dL(B.aC,!1,!1,!0,o),B.o,A.dL(B.ax,!1,!1,!0,o),B.o],q,n))}m.a_(0,B.tF)
 m.m(0,B.yb,B.o)
 m.m(0,B.y8,B.o)
