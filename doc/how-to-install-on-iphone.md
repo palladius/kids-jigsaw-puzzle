@@ -48,13 +48,17 @@ open ios/Runner.xcworkspace
 ## ⚠️ Troubleshooting
 
 ### The "Endless Spinner" / Pairing Hangs
+
 If Xcode hangs while "Pairing" or shows the phone as "Unpaired" despite being connected:
+
 1. **Unplug and Replug**: Simply detaching and re-attaching the USB cable often triggers the final handshake.
 2. **Toggle Wi-Fi**: Temporarily turn off Wi-Fi on the iPhone to force Xcode to communicate exclusively over USB.
 3. **Check the Top Bar**: If you see "iOS XX.X is not installed," click the **[Get]** button to download the required system components.
 
 ### "Untrusted Developer"
+
 If the app installs but won't open:
+
 1. Go to **Settings > General > VPN & Device Management**.
 2. Tap your Apple ID and click **Trust**.
 
@@ -63,6 +67,7 @@ If the app installs but won't open:
 ## 🚀 Future Runs
 
 Once paired and signed:
+
 ```bash
 just run-ios
 ```

@@ -2,11 +2,12 @@
 
 Note: version can be ascertained bia `just version`.
 
-## 1.1.5+17
+## 1.1.5+18
 
-- 🖼️ **Assets Fix**: Fixed a bug where images were missing in the main menu due to a hardcoded list.
-- ⚙️ **Automation**: Added `scripts/update_images.dart` and updated `justfile` to automatically sync the image list with actual assets during every build. All 20+ images are now available! See Issue #2.
-- 🏷️ **Version Sync**: Bumped version to v1.1.5+17.
+- ☁️ **Cloud Sync Fix**: Updated GitHub Actions to run the image sync script during deployment. Now, the web version will always be in sync with the repository assets, even for images added directly in the cloud!
+- 🏷️ **Version Sync**: Bumped version to v1.1.5+18.
+
+## 1.1.5+17
 
 ## 1.1.5+16
 

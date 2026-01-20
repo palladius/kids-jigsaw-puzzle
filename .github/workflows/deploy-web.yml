@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -13,18 +13,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-          
+          channel: "stable"
+
       - name: Enable Web
         run: flutter config --enable-web
-        
+
       - name: Build Web
-        run: flutter build web --base-href "/kids-jigsaw-puzzle/"
-        
+        run: |
+          dart scripts/update_images.dart
+          flutter build web --base-href "/kids-jigsaw-puzzle/"
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
