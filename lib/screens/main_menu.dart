@@ -13,17 +13,24 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
   static const List<String> _images = [
+    'assets/images/aj-megapuzzle.png',
+    'assets/images/aj-with-giraffe.png',
+    'assets/images/ale-seby-google-chess3.png',
+    'assets/images/ale-seby-kate-argenta-ele-jc.png',
     'assets/images/ale-seby-ski.png',
     'assets/images/ale-seby-xmas-cropped.png',
     'assets/images/ale-seby-xmas.png',
-    'assets/images/family-pijama-estensi.png',
-    'assets/images/aj-with-giraffe.png',
     'assets/images/arca-di-noe-torta-compleanno.png',
-    'assets/images/gdg-zurich-jan26.png',
-    'assets/images/aj-megapuzzle.png',
-    'assets/images/seby-puzzle.png',
-    'assets/images/logo.png',
+    'assets/images/comacchio-3ponti.png',
+    'assets/images/family-pijama-estensi.png',
     'assets/images/family-xmas-presents.png',
+    'assets/images/gdg-zurich-jan26.png',
+    'assets/images/logo.png',
+    'assets/images/puzzle-42.png',
+    'assets/images/reindeers-in-stadelhofen.png',
+    'assets/images/reindeers-polar-express.png',
+    'assets/images/seby-puzzle.png',
+    'assets/images/zurich-tram4.png',
   ];
 
   String? _selectedImagePath; // null means random

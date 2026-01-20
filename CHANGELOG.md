@@ -1,6 +1,12 @@
 # CHANGELOG
 
 Note: version can be ascertained bia `just version`.
+
+## 1.1.5+17
+
+- 🖼️ **Assets Fix**: Fixed a bug where only 11 out of 18 images were shown in the main menu due to a hardcoded list. All 18 images are now available! See Issue #2.
+- 🏷️ **Version Sync**: Bumped version to v1.1.5+17.
+
 ## 1.1.5+16
 
 - 🍎 **Mac Build Stabilized**: Fixed `pubspec.yaml` dependency conflicts (`cupertino_icons` and `shared_preferences`).
