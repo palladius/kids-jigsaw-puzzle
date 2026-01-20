@@ -31,6 +31,7 @@ class _MainMenuState extends State<MainMenu> {
     'assets/images/ale-seby-lederhosen-g.png',
     'assets/images/ale-seby-mexico.png',
     'assets/images/ale-seby-palla-bici.png',
+    'assets/images/ale-seby-piramide-uxmal.png',
     'assets/images/ale-seby-scacchi-locarno.png',
     'assets/images/ale-seby-scemi-tulum.png',
     'assets/images/ale-seby-ski.png',
@@ -74,9 +75,36 @@ class _MainMenuState extends State<MainMenu> {
 
   String? _selectedImagePath; // null means random
 
+  @override
+  void initState() {
+    super.initState();
+    // Select a random image by default on startup
+    _selectRandomImage();
+  }
+
+  void _selectRandomImage() {
+    setState(() {
+      _selectedImagePath = _images[Random().nextInt(_images.length)];
+    });
+  }
+
   String _getEffectiveImage() {
-    if (_selectedImagePath != null) return _selectedImagePath!;
-    return _images[Random().nextInt(_images.length)];
+    return _selectedImagePath ?? _images[Random().nextInt(_images.length)];
+  }
+
+  void _showImageSelectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => ImageSelectionDialog(
+        images: _images,
+        onImageSelected: (path) {
+          setState(() {
+            _selectedImagePath = path;
+          });
+          Navigator.pop(context);
+        },
+      ),
+    );
   }
 
   @override
@@ -98,31 +126,75 @@ class _MainMenuState extends State<MainMenu> {
                 style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 30),
-              
-              // Image Selector Section
-              const Text('Select Image:', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-              const SizedBox(height: 10),
-              SizedBox(
-                height: 120,
-                child: ScrollConfiguration(
-                  behavior: ScrollConfiguration.of(context).copyWith(
-                    dragDevices: {
-                      PointerDeviceKind.touch,
-                      PointerDeviceKind.mouse,
-                      PointerDeviceKind.trackpad,
-                    },
-                  ),
-                  child: ListView(
-                    scrollDirection: Axis.horizontal,
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    children: [
-                      _buildImageThumbnail(null, 'Random'),
-                      ..._images.map((path) => _buildImageThumbnail(path, path.split('/').last.split('.').first)),
+
+              // --- New Image Selector ---
+              Text(
+                'Selected Image (${_images.length} available):',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 15),
+
+              // Currently Selected Image Preview
+              if (_selectedImagePath != null)
+                Container(
+                  width: 200,
+                  height: 200,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.blue, width: 4),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 10,
+                        offset: const Offset(0, 5),
+                      ),
                     ],
                   ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(
+                      _selectedImagePath!,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
+              if (_selectedImagePath != null)
+                 Padding(
+                   padding: const EdgeInsets.only(top: 8.0),
+                   child: Text(
+                     _selectedImagePath!.split('/').last.split('.').first,
+                     style: const TextStyle(fontWeight: FontWeight.bold),
+                   ),
+                 ),
+
+              const SizedBox(height: 20),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Random Button
+                  ElevatedButton.icon(
+                    onPressed: _selectRandomImage,
+                    icon: const Icon(Icons.casino),
+                    label: const Text('Random'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  // Choose Button
+                  ElevatedButton.icon(
+                    onPressed: () => _showImageSelectionDialog(context),
+                    icon: const Icon(Icons.photo_library),
+                    label: const Text('Choose Image'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    ),
+                  ),
+                ],
               ),
-              
+              // --------------------------
+
               const SizedBox(height: 40),
               if (isDebug) ...[
                 _buildDifficultyButton(context, 'DEBUG (2x2)', 2),
@@ -157,56 +229,6 @@ class _MainMenuState extends State<MainMenu> {
     );
   }
 
-  Widget _buildImageThumbnail(String? path, String label) {
-    final isSelected = _selectedImagePath == path;
-    return GestureDetector(
-      onTap: () => setState(() => _selectedImagePath = path),
-      child: Container(
-        width: 100,
-        margin: const EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: isSelected ? Colors.blue : Colors.grey.shade300,
-            width: isSelected ? 3 : 1,
-          ),
-          borderRadius: BorderRadius.circular(8),
-          color: isSelected ? Colors.blue.withOpacity(0.1) : Colors.white,
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
-                child: path == null
-                    ? const Icon(Icons.casino, size: 40, color: Colors.grey)
-                    : OverflowBox(
-                        maxWidth: 200,
-                        maxHeight: 200,
-                        child: Image.asset(
-                          path,
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   Widget _buildDifficultyButton(BuildContext context, String label, int gridSize) {
     return ElevatedButton(
       onPressed: () {
@@ -225,6 +247,127 @@ class _MainMenuState extends State<MainMenu> {
         textStyle: const TextStyle(fontSize: 24),
       ),
       child: Text(label),
+    );
+  }
+}
+
+class ImageSelectionDialog extends StatefulWidget {
+  final List<String> images;
+  final Function(String) onImageSelected;
+
+  const ImageSelectionDialog({
+    super.key,
+    required this.images,
+    required this.onImageSelected,
+  });
+
+  @override
+  State<ImageSelectionDialog> createState() => _ImageSelectionDialogState();
+}
+
+class _ImageSelectionDialogState extends State<ImageSelectionDialog> {
+  String _searchQuery = '';
+
+  @override
+  Widget build(BuildContext context) {
+    final filteredImages = widget.images.where((path) {
+      final name = path.split('/').last.split('.').first;
+      return name.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList();
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        width: 800, // Fixed width for desktop/web
+        height: 600,
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // Header
+            Row(
+              children: [
+                const Icon(Icons.image, size: 28),
+                const SizedBox(width: 10),
+                const Text(
+                  'Choose an Image',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+
+            // Search Bar
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Search images...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                filled: true,
+                fillColor: Colors.grey.shade100,
+              ),
+              onChanged: (value) => setState(() => _searchQuery = value),
+            ),
+            const SizedBox(height: 20),
+
+            // Image Grid
+            Expanded(
+              child: filteredImages.isEmpty
+                  ? const Center(
+                      child: Text('No images found',
+                          style: TextStyle(fontSize: 18, color: Colors.grey)),
+                    )
+                  : GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent: 150,
+                        childAspectRatio: 1,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: filteredImages.length,
+                      itemBuilder: (context, index) {
+                        final path = filteredImages[index];
+                        final name = path.split('/').last.split('.').first;
+                        return InkWell(
+                          onTap: () => widget.onImageSelected(path),
+                          borderRadius: BorderRadius.circular(8),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.asset(
+                                    path,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
+                                child: Text(
+                                  name,
+                                  style: const TextStyle(fontSize: 12),
+                                  textAlign: TextAlign.center,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

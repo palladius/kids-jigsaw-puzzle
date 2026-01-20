@@ -1,4 +1,4 @@
-# 🧩 Kids Jigsaw Puzzle Game
+# 🧩 Kids Jigsaw Puzzle Game v1.1.5
 
 ![Grid Logo](grid-image.png)
 
@@ -39,3 +39,15 @@
 - **Android**: Install [Android Studio](https://developer.android.com/studio) and the Flutter SDK.
 - **Linux**: Install Flutter via snap or manual download.
 - **Web**: Flutter SDK is sufficient.
+
+<br/>
+
+---
+
+<div align="center">
+
+Made with **Antigravity** by **[Riccardo Carlesso](https://github.com/palladius)**
+
+[![Antigravity](https://img.shields.io/badge/Made%20with-Antigravity-blueviolet?style=for-the-badge&logo=google-cloud)](https://github.com/palladius)
+
+</div>
