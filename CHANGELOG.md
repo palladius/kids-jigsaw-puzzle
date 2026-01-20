@@ -2,6 +2,13 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.6+19
+
+- 🖼️ **New Image Selector**: Replaced the horizontal list with a matrix/grid view for better navigation.
+- 🔍 **Search Functionality**: Added a search bar to easily find images by name.
+- 🎲 **Random vs Choose**: Clear distinction between picking a random image and choosing a specific one.
+- 🏷️ **Version Sync**: Bumped version to v1.1.6+19.
+
 ## 1.1.5+18
 
 - ☁️ **Cloud Sync Fix**: Updated GitHub Actions to run the image sync script during deployment. Now, the web version will always be in sync with the repository assets, even for images added directly in the cloud!
