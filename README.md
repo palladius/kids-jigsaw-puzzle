@@ -1,4 +1,4 @@
-# 🧩 Kids Jigsaw Puzzle Game v1.1.7
+# 🧩 Kids Jigsaw Puzzle Game v1.1.8
 
 ![Grid Logo](grid-image.png)
 

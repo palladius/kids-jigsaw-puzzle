@@ -2,6 +2,11 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.8+21
+
+- 🛫 **Extreme Difficulty**: Added "Airport Wait" (10x10) and "Netflix is Down" (12x12) for those extra long sessions.
+- 🏷️ **Version Sync**: Bumped version to v1.1.8+21.
+
 ## 1.1.7+20
 
 - 📱 **Responsive Layout**: Added a side-by-side layout for larger screens (desktop/tablet) to fit all options in a single frame.
