@@ -4,7 +4,8 @@ Note: version can be ascertained bia `just version`.
 
 ## 1.1.5+17
 
-- 🖼️ **Assets Fix**: Fixed a bug where only 11 out of 18 images were shown in the main menu due to a hardcoded list. All 18 images are now available! See Issue #2.
+- 🖼️ **Assets Fix**: Fixed a bug where images were missing in the main menu due to a hardcoded list.
+- ⚙️ **Automation**: Added `scripts/update_images.dart` and updated `justfile` to automatically sync the image list with actual assets during every build. All 20+ images are now available! See Issue #2.
 - 🏷️ **Version Sync**: Bumped version to v1.1.5+17.
 
 ## 1.1.5+16
