@@ -2,6 +2,13 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.7+20
+
+- 📱 **Responsive Layout**: Added a side-by-side layout for larger screens (desktop/tablet) to fit all options in a single frame.
+- 🍋 **New Difficulty Levels**: Added "Lemon Squeezy" (5x5) and "Whiz Kid" (7x7).
+- 🎉 **Fun Names**: Renamed difficulty levels to be more kid-friendly (Easy Peasy, Smarty Pants, Genius Mode).
+- 🏷️ **Version Sync**: Bumped version to v1.1.7+20.
+
 ## 1.1.6+19
 
 - 🖼️ **New Image Selector**: Replaced the horizontal list with a matrix/grid view for better navigation.

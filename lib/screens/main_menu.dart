@@ -115,138 +115,224 @@ class _MainMenuState extends State<MainMenu> {
       appBar: AppBar(
         title: const Text('Kids Jigsaw Puzzle'),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(vertical: 40),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Welcome!',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 30),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 900;
 
-              // --- New Image Selector ---
-              Text(
-                'Selected Image (${_images.length} available):',
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-              ),
-              const SizedBox(height: 15),
-
-              // Currently Selected Image Preview
-              if (_selectedImagePath != null)
-                Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue, width: 4),
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: Image.asset(
-                      _selectedImagePath!,
-                      fit: BoxFit.cover,
+          if (isWide) {
+            return Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                child: Column(
+                  children: [
+                    const Text(
+                      'Welcome!',
+                      style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
                     ),
-                  ),
-                ),
-              if (_selectedImagePath != null)
-                 Padding(
-                   padding: const EdgeInsets.only(top: 8.0),
-                   child: Text(
-                     _selectedImagePath!.split('/').last.split('.').first,
-                     style: const TextStyle(fontWeight: FontWeight.bold),
-                   ),
-                 ),
-
-              const SizedBox(height: 20),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Random Button
-                  ElevatedButton.icon(
-                    onPressed: _selectRandomImage,
-                    icon: const Icon(Icons.casino),
-                    label: const Text('Random'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                    const SizedBox(height: 40),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Left Column: Image Selection
+                        SizedBox(
+                          width: 400,
+                          child: Column(
+                            children: [
+                              Text(
+                                'Selected Image (${_images.length} available):',
+                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                              const SizedBox(height: 20),
+                              _buildImagePreview(),
+                              const SizedBox(height: 20),
+                              _buildImageSelectionButtons(context),
+                              const SizedBox(height: 40),
+                              _buildHallOfFameButton(context),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 60),
+                        // Right Column: Difficulty
+                        SizedBox(
+                          width: 320,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text(
+                                'Choose Difficulty:',
+                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(height: 20),
+                              if (isDebug) _buildDifficultyButton(context, 'DEBUG (2x2)', 2, Colors.red.shade100),
+                              _buildDifficultyButton(context, 'Easy Peasy (4x4)', 4, Colors.green.shade100),
+                              _buildDifficultyButton(context, 'Lemon Squeezy (5x5)', 5, Colors.lime.shade100),
+                              _buildDifficultyButton(context, 'Smarty Pants (6x6)', 6, Colors.blue.shade100),
+                              _buildDifficultyButton(context, 'Whiz Kid (7x7)', 7, Colors.orange.shade100),
+                              _buildDifficultyButton(context, 'Genius Mode (8x8)', 8, Colors.purple.shade100),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(width: 20),
-                  // Choose Button
-                  ElevatedButton.icon(
-                    onPressed: () => _showImageSelectionDialog(context),
-                    icon: const Icon(Icons.photo_library),
-                    label: const Text('Choose Image'),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    ),
-                  ),
-                ],
-              ),
-              // --------------------------
-
-              const SizedBox(height: 40),
-              if (isDebug) ...[
-                _buildDifficultyButton(context, 'DEBUG (2x2)', 2),
-                const SizedBox(height: 20),
-              ],
-              _buildDifficultyButton(context, 'Easy (4x4)', 4),
-              const SizedBox(height: 20),
-              _buildDifficultyButton(context, 'Medium (6x6)', 6),
-              const SizedBox(height: 20),
-              _buildDifficultyButton(context, 'Hard (8x8)', 8),
-              const SizedBox(height: 40),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LeaderboardScreen()),
-                  );
-                },
-                icon: const Icon(Icons.emoji_events),
-                label: const Text('Hall of Fame'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.amber,
-                  foregroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
+            );
+          } else {
+            return Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Welcome!',
+                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 30),
+                    Text(
+                      'Selected Image (${_images.length} available):',
+                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    ),
+                    const SizedBox(height: 20),
+                    _buildImagePreview(),
+                    const SizedBox(height: 20),
+                    _buildImageSelectionButtons(context),
+                    const SizedBox(height: 40),
+                    const Text(
+                      'Choose Difficulty:',
+                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    if (isDebug) _buildDifficultyButton(context, 'DEBUG (2x2)', 2, Colors.red.shade100),
+                    _buildDifficultyButton(context, 'Easy Peasy (4x4)', 4, Colors.green.shade100),
+                    _buildDifficultyButton(context, 'Lemon Squeezy (5x5)', 5, Colors.lime.shade100),
+                    _buildDifficultyButton(context, 'Smarty Pants (6x6)', 6, Colors.blue.shade100),
+                    _buildDifficultyButton(context, 'Whiz Kid (7x7)', 7, Colors.orange.shade100),
+                    _buildDifficultyButton(context, 'Genius Mode (8x8)', 8, Colors.purple.shade100),
+                    const SizedBox(height: 40),
+                    _buildHallOfFameButton(context),
+                  ],
+                ),
+              ),
+            );
+          }
+        },
       ),
     );
   }
 
-  Widget _buildDifficultyButton(BuildContext context, String label, int gridSize) {
-    return ElevatedButton(
+  Widget _buildImagePreview() {
+    final imagePath = _selectedImagePath ?? 'assets/images/logo.png'; // Fallback for preview
+    return Column(
+      children: [
+        Container(
+          width: 250,
+          height: 250,
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.blue, width: 4),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.1),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: _selectedImagePath == null 
+              ? const Center(child: Icon(Icons.casino, size: 80, color: Colors.blue))
+              : Image.asset(imagePath, fit: BoxFit.cover),
+          ),
+        ),
+        if (_selectedImagePath != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: Text(
+              _selectedImagePath!.split('/').last.split('.').first,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+          )
+        else
+          const Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: Text('Random Image', style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildImageSelectionButtons(BuildContext context) {
+    return Wrap(
+      spacing: 15,
+      runSpacing: 10,
+      alignment: WrapAlignment.center,
+      children: [
+        ElevatedButton.icon(
+          onPressed: () => setState(() => _selectedImagePath = null),
+          icon: const Icon(Icons.casino),
+          label: const Text('Random'),
+          style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
+        ),
+        ElevatedButton.icon(
+          onPressed: () => _showImageSelectionDialog(context),
+          icon: const Icon(Icons.photo_library),
+          label: const Text('Choose Image'),
+          style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHallOfFameButton(BuildContext context) {
+    return ElevatedButton.icon(
       onPressed: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => PuzzleBoard(
-              gridSize: gridSize,
-              imagePath: _getEffectiveImage(),
-            ),
-          ),
+          MaterialPageRoute(builder: (context) => const LeaderboardScreen()),
         );
       },
+      icon: const Icon(Icons.emoji_events),
+      label: const Text('Hall of Fame'),
       style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
-        textStyle: const TextStyle(fontSize: 24),
+        backgroundColor: Colors.amber,
+        foregroundColor: Colors.black,
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+        textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
       ),
-      child: Text(label),
+    );
+  }
+
+  Widget _buildDifficultyButton(BuildContext context, String label, int gridSize, Color color) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: SizedBox(
+        width: 280,
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PuzzleBoard(
+                  gridSize: gridSize,
+                  imagePath: _getEffectiveImage(),
+                ),
+              ),
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: color,
+            foregroundColor: Colors.black,
+            padding: const EdgeInsets.symmetric(vertical: 20),
+            textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          ),
+          child: Text(label),
+        ),
+      ),
     );
   }
 }

@@ -7,9 +7,11 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
-    // Navigate to Easy puzzle (4x4)
-    await tester.tap(find.text('Easy (4x4)'));
-    await tester.pumpAndSettle();
+    final easyButton = find.textContaining('Easy Peasy');
+    await tester.ensureVisible(easyButton);
+    await tester.tap(easyButton);
+    await tester.pump();
+    await tester.pump(const Duration(seconds: 1));
 
     // Verify GridView exists
     expect(find.byType(GridView), findsOneWidget);
