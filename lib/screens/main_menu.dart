@@ -393,6 +393,7 @@ class _ImageSelectionDialogState extends State<ImageSelectionDialog> {
 
             // Search Bar
             TextField(
+              autofocus: true,
               decoration: InputDecoration(
                 hintText: 'Search images...',
                 prefixIcon: const Icon(Icons.search),

@@ -3,6 +3,7 @@ import 'package:confetti/confetti.dart';
 
 import 'package:kids_jigsaw_puzzle/logic/puzzle_logic.dart';
 import 'package:kids_jigsaw_puzzle/logic/high_score_manager.dart';
+import 'package:kids_jigsaw_puzzle/screens/win_dialog.dart';
 
 class PuzzleBoard extends StatefulWidget {
   final int gridSize;
@@ -54,92 +55,30 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     final duration = _stopwatch.elapsed;
     final seconds = duration.inSeconds;
     final score = HighScoreManager.calculateScore(widget.gridSize, seconds);
-    final existingNames = await HighScoreManager.getUniqueNames();
-    String selectedName = '';
 
     if (!mounted) return;
 
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 32.0),
-          child: SizedBox(
-            width: 350,
-            child: AlertDialog(
-              title: const Text('🏆 BRAVO!'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('You solved it in $seconds seconds!'),
-                  const SizedBox(height: 8),
-                  Text('Score: $score', style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.blue)),
-                  const SizedBox(height: 16),
-                  const Text('Enter your name for the Hall of Fame:'),
-                  const SizedBox(height: 8),
-                  Autocomplete<String>(
-                    optionsBuilder: (TextEditingValue textEditingValue) {
-                      if (textEditingValue.text.isEmpty) {
-                        return const Iterable<String>.empty();
-                      }
-                      return existingNames.where((String option) {
-                        return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
-                      });
-                    },
-                    onSelected: (String selection) {
-                      selectedName = selection;
-                    },
-                    fieldViewBuilder: (context, textController, focusNode, onFieldSubmitted) {
-                      return TextField(
-                        controller: textController,
-                        focusNode: focusNode,
-                        decoration: const InputDecoration(
-                          hintText: 'Your Name',
-                          border: OutlineInputBorder(),
-                        ),
-                        onChanged: (value) => selectedName = value,
-                      );
-                    },
-                  ),
-                ],
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () async {
-                    final name = selectedName.trim().isEmpty ? 'Anonymous' : selectedName.trim();
-                    await HighScoreManager.saveScore(HighScore(
-                      name: name,
-                      score: score,
-                      gridSize: widget.gridSize,
-                      seconds: seconds,
-                      date: DateTime.now(),
-                    ));
-                    if (mounted) {
-                      Navigator.pop(context); // Close dialog
-                      Navigator.pop(context); // Go back to menu
-                    }
-                  },
-                  child: const Text('Save & Exit'),
-                ),
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context); // Close dialog
-                    setState(() {
-                      _game.shuffle();
-                      _moveCount++;
-                      _stopwatch.reset();
-                      _stopwatch.start();
-                    });
-                  },
-                  child: const Text('Play Again'),
-                ),
-              ],
-            ),
-          ),
-        ),
+      builder: (context) => WinDialog(
+        score: score,
+        seconds: seconds,
+        gridSize: widget.gridSize,
+        imagePath: widget.imagePath,
+        onPlayAgain: () {
+          Navigator.pop(context); // Close dialog
+          setState(() {
+            _game.shuffle();
+            _moveCount = 0;
+            _stopwatch.reset();
+            _stopwatch.start();
+          });
+        },
+        onMenu: () {
+          Navigator.pop(context); // Close dialog
+          Navigator.pop(context); // Back to menu
+        },
       ),
     );
   }
