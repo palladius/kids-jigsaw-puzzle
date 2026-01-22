@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:kids_jigsaw_puzzle/services/universe_service.dart';
 import 'puzzle_board.dart';
 import 'leaderboard_screen.dart';
 
@@ -12,83 +13,53 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  static const List<String> _images = [
-    'assets/images/aj-megapuzzle.png',
-    'assets/images/aj-with-giraffe.png',
-    'assets/images/ale-animale-mexico-cool.png',
-    'assets/images/ale-bici-meilen.png',
-    'assets/images/ale-gondola.png',
-    'assets/images/ale-maglietta-ele.png',
-    'assets/images/ale-papa-mexico-pool.png',
-    'assets/images/ale-pupurabbu.png',
-    'assets/images/ale-seby-android.png',
-    'assets/images/ale-seby-bordo-colorato.png',
-    'assets/images/ale-seby-google-chess3.png',
-    'assets/images/ale-seby-google-logo.png',
-    'assets/images/ale-seby-halloween.png',
-    'assets/images/ale-seby-kate-argenta-ele-jc.png',
-    'assets/images/ale-seby-kate-venezia.png',
-    'assets/images/ale-seby-lederhosen-g.png',
-    'assets/images/ale-seby-mexico.png',
-    'assets/images/ale-seby-palla-bici.png',
-    'assets/images/ale-seby-piramide-uxmal.png',
-    'assets/images/ale-seby-scacchi-locarno.png',
-    'assets/images/ale-seby-scemi-tulum.png',
-    'assets/images/ale-seby-ski.png',
-    'assets/images/ale-seby-slitta.png',
-    'assets/images/ale-seby-tandem-wow.png',
-    'assets/images/ale-seby-train.png',
-    'assets/images/ale-seby-tulum.png',
-    'assets/images/ale-seby-uxmal.png',
-    'assets/images/ale-seby-xmas-cropped.png',
-    'assets/images/ale-seby-xmas.png',
-    'assets/images/ale-spiaggia-mexico.png',
-    'assets/images/ale-tieffenbrunnen.png',
-    'assets/images/ale-xmas-jumper.png',
-    'assets/images/arca-di-noe-torta-compleanno.png',
-    'assets/images/comacchio-3ponti.png',
-    'assets/images/family-in-tulum.png',
-    'assets/images/family-pijama-estensi.png',
-    'assets/images/family-santa-2024.png',
-    'assets/images/family-silvester-lauf.png',
-    'assets/images/family-xmas-presents.png',
-    'assets/images/gdg-zurich-jan26.png',
-    'assets/images/logo.png',
-    'assets/images/lucy-bimbi-ikea.png',
-    'assets/images/lucy-kate-ale-rialto.png',
-    'assets/images/lucy-seby-estate-inverno.png',
-    'assets/images/lucy-venezia-kate-bimbi-rialto.png',
-    'assets/images/pupurabbu.png',
-    'assets/images/puzzle-42.png',
-    'assets/images/reindeers-in-stadelhofen.png',
-    'assets/images/reindeers-polar-express.png',
-    'assets/images/ricc-ale-seby-rubycon.png',
-    'assets/images/ricc-bimbi-lugano.png',
-    'assets/images/ricc-lucy-albero-lde.png',
-    'assets/images/seby-in-space.png',
-    'assets/images/seby-palla-di-natale.png',
-    'assets/images/seby-puzzle.png',
-    'assets/images/seby-sgarrupato.png',
-    'assets/images/seby-ski-italy.png',
-    'assets/images/zurich-tram4.png',
-  ];
+  List<String> _images = [];
+  Map<String, List<String>> _universeImages = {};
+  String _currentUniverse = const String.fromEnvironment('UNIVERSE_DEFAULT', defaultValue: 'default');
+  bool _isLoading = true;
 
   String? _selectedImagePath; // null means random
 
   @override
   void initState() {
     super.initState();
-    // Select a random image by default on startup
-    _selectRandomImage();
+    _loadUniverses();
+  }
+
+  Future<void> _loadUniverses() async {
+    final service = UniverseService();
+    final universes = await service.getUniverses();
+    
+    if (mounted) {
+      setState(() {
+        _universeImages = universes;
+        // Ensure default universe exists, otherwise fallback to first available
+        if (!_universeImages.containsKey(_currentUniverse) && _universeImages.isNotEmpty) {
+          _currentUniverse = _universeImages.keys.first;
+        }
+        _updateImagesForCurrentUniverse();
+         _isLoading = false;
+         _selectRandomImage();
+      });
+    }
+  }
+
+  void _updateImagesForCurrentUniverse() {
+    setState(() {
+      _images = _universeImages[_currentUniverse] ?? [];
+      _selectedImagePath = null; // Reset selection on universe change
+    });
   }
 
   void _selectRandomImage() {
+    if (_images.isEmpty) return;
     setState(() {
       _selectedImagePath = _images[Random().nextInt(_images.length)];
     });
   }
 
   String _getEffectiveImage() {
+    if (_images.isEmpty) return 'assets/images/universes/default/logo.png'; // Fallback
     return _selectedImagePath ?? _images[Random().nextInt(_images.length)];
   }
 
@@ -110,10 +81,48 @@ class _MainMenuState extends State<MainMenu> {
   @override
   Widget build(BuildContext context) {
     const bool isDebug = String.fromEnvironment('GAME_DEBUG') == 'true';
+    const bool showUniverseSelector = String.fromEnvironment('UNIVERSE_ALLOW_SWITCHING', defaultValue: 'true') == 'true';
+
+    if (_isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Kids Jigsaw Puzzle'),
+        actions: showUniverseSelector && _universeImages.isNotEmpty ? [
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(right: 16.0),
+              child: DropdownButton<String>(
+                value: _currentUniverse,
+                icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                dropdownColor: Colors.blue,
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+                underline: Container(), // Remove underline
+                items: _universeImages.keys.map((String key) {
+                  return DropdownMenuItem<String>(
+                    value: key,
+                    child: Text(
+                      key.replaceAll('-', ' ').toUpperCase(),
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  );
+                }).toList(),
+                onChanged: (String? newValue) {
+                  if (newValue != null) {
+                    setState(() {
+                      _currentUniverse = newValue;
+                      _updateImagesForCurrentUniverse();
+                    });
+                  }
+                },
+              ),
+            ),
+          ),
+        ] : null,
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {
@@ -129,6 +138,7 @@ class _MainMenuState extends State<MainMenu> {
                       'Welcome!',
                       style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
                     ),
+
                     const SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -228,7 +238,7 @@ class _MainMenuState extends State<MainMenu> {
   }
 
   Widget _buildImagePreview() {
-    final imagePath = _selectedImagePath ?? 'assets/images/logo.png'; // Fallback for preview
+    final imagePath = _selectedImagePath ?? 'assets/images/universes/default/logo.png'; // Fallback for preview
     return Column(
       children: [
         Container(

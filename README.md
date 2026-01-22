@@ -17,6 +17,14 @@
 
 ![Example image of Ricc kids](image.png)
 
+## ✨ Features
+- **Multi-Universe Support**: Switch between different image sets (e.g., "Default" vs "Family").
+    - Configurable via Environment Variables:
+        - `UNIVERSE_ALLOW_SWITCHING=true`: Enables the universe selector dropdown in the AppBar.
+        - `UNIVERSE_DEFAULT=universe-name`: Sets the default universe on startup.
+- **Dynamic Asset Loading**: Automatically discovers new images added to `assets/images/universes/`.
+- **Custom Image Upload**: Add your own photos from the main menu!
+
 ## 🚀 Installation
 
 ### macOS (Recommended)

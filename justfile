@@ -2,15 +2,19 @@
 default:
     @just --list
 
-# Run the app on Linux
+# Run the app on Linux (with Universe Selector enabled)
 run-linux:
-    flutter run -d linux
+    flutter run -d linux --dart-define=UNIVERSE_ALLOW_SWITCHING=true
+
+# Run with Family universe default
+run-family:
+    flutter run -d linux --dart-define=UNIVERSE_ALLOW_SWITCHING=true --dart-define=UNIVERSE_DEFAULT=riccardo-family
 
 run-mac:
-    flutter run -d macos
+    flutter run -d macos --dart-define=UNIVERSE_ALLOW_SWITCHING=true
 
 run-ios:
-    flutter run -d ios
+    flutter run -d ios --dart-define=UNIVERSE_ALLOW_SWITCHING=true
 
 # Update the image list dynamically
 update-images:

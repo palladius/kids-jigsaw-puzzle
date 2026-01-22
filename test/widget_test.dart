@@ -6,6 +6,7 @@ void main() {
   testWidgets('Win condition test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
+    await tester.pumpAndSettle(); // Wait for MainMenu to load universes
 
     final easyButton = find.textContaining('Easy Peasy');
     await tester.ensureVisible(easyButton);

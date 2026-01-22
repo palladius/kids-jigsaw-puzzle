@@ -2,6 +2,14 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.9+22
+
+- 🪐 **Universe Support**: Introduced concept of "Universes" (e.g., Default, Family) to grouping images.
+- 🛠️ **Environment Variables**: Use `UNIVERSE_ALLOW_SWITCHING=true` to show the selector, and `UNIVERSE_DEFAULT` to set the starting universe.
+- 🏗️ **Robust Asset Loading**: Switched to modern `AssetManifest` API to fixing image discovery on newer Flutter versions.
+- 🧹 **Cleanup**: Removed static image lists and update scripts; everything is now dynamic!
+- 🏷️ **Version Sync**: Bumped version to v1.1.9+22.
+
 ## 1.1.8+21
 
 - 🛫 **Extreme Difficulty**: Added "Airport Wait" (10x10) and "Netflix is Down" (12x12) for those extra long sessions.
