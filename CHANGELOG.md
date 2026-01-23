@@ -2,6 +2,12 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.15+28
+
+- 🛑 **Exit Confirmation**: The Back button (and new shortcuts 'B'/'Backspace') now asks for confirmation before quitting. No more accidental exits!
+- 🎨 **Dialog Polish**: "Are you sure?" dialogs now feature colorful buttons, with "Safe" options (Stay/No) focused by default.
+- 🏷️ **Version Sync**: Bumped version to v1.1.15+28.
+
 ## 1.1.14+27
 
 - ⬅️ **Reload Relocated**: Moved the Reload button to the left (next to Back button) to prevent accidental clicks near Tips/Hints.

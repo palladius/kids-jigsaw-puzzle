@@ -29,6 +29,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
   int _moveCount = 0;
   int _tipsUsed = 0;
   bool _isXrayEnabled = false;
+  bool _canPop = false;
   List<int> _suggestedSwapIndices = [];
   Timer? _suggestionTimer;
 
@@ -199,12 +200,26 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
       builder: (context) => AlertDialog(
         title: const Text('Restart Puzzle?'),
         content: const Text('Are you sure you want to shuffle and restart?'),
+        actionsAlignment: MainAxisAlignment.spaceEvenly,
         actions: [
-          TextButton(
+          ElevatedButton.icon(
+            autofocus: true,
+            icon: const Icon(Icons.close),
+            label: const Text('No'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green.shade100,
+              foregroundColor: Colors.green.shade900,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
             onPressed: () => Navigator.pop(context),
-            child: const Text('No'),
           ),
-          TextButton(
+          TextButton.icon(
+            icon: const Icon(Icons.refresh),
+            label: const Text('Yes'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
             onPressed: () {
               Navigator.pop(context);
               setState(() {
@@ -215,11 +230,52 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                 _stopwatch.start();
               });
             },
-            child: const Text('Yes'),
           ),
         ],
       ),
     );
+  }
+
+  Future<void> _confirmExit() async {
+    final shouldLeave = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Leave Puzzle?'),
+        content: const Text('Do you want to go back to the menu? Your progress will be lost.'),
+        actionsAlignment: MainAxisAlignment.spaceEvenly,
+        actions: [
+          ElevatedButton.icon(
+            autofocus: true,
+            icon: const Icon(Icons.close),
+            label: const Text('Stay'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.green.shade100,
+              foregroundColor: Colors.green.shade900,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            onPressed: () => Navigator.pop(context, false),
+          ),
+          TextButton.icon(
+            icon: const Icon(Icons.exit_to_app),
+            label: const Text('Leave'),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            onPressed: () => Navigator.pop(context, true),
+          ),
+        ],
+      ),
+    );
+
+    if (shouldLeave == true) {
+      setState(() {
+        _canPop = true;
+      });
+      if (mounted) {
+        Navigator.pop(context);
+      }
+    }
   }
 
   Widget _buildKeyBadge(String label) {
@@ -343,29 +399,39 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
 
   @override
   Widget build(BuildContext context) {
-    return Focus(
-      autofocus: true,
-      onKey: (node, event) {
-        if (event is RawKeyDownEvent) {
-          if (event.logicalKey == LogicalKeyboardKey.space) {
-             if (!_isXrayEnabled) setState(() => _isXrayEnabled = true);
-             return KeyEventResult.handled;
-          } else if (event.logicalKey == LogicalKeyboardKey.keyT) {
-             _showSuggestion();
-             return KeyEventResult.handled;
-          } else if (event.logicalKey == LogicalKeyboardKey.keyH) {
-             _showHelpDialog();
-             return KeyEventResult.handled;
-          }
-        } else if (event is RawKeyUpEvent) {
-          if (event.logicalKey == LogicalKeyboardKey.space) {
-             setState(() => _isXrayEnabled = false);
-             return KeyEventResult.handled;
-          }
-        }
-        return KeyEventResult.ignored;
+    return PopScope(
+      canPop: _canPop,
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        _confirmExit();
       },
-      child: Stack(
+      child: Focus(
+        autofocus: true,
+        onKey: (node, event) {
+          if (event is RawKeyDownEvent) {
+            if (event.logicalKey == LogicalKeyboardKey.space) {
+               if (!_isXrayEnabled) setState(() => _isXrayEnabled = true);
+               return KeyEventResult.handled;
+            } else if (event.logicalKey == LogicalKeyboardKey.keyT) {
+               _showSuggestion();
+               return KeyEventResult.handled;
+            } else if (event.logicalKey == LogicalKeyboardKey.keyH) {
+               _showHelpDialog();
+               return KeyEventResult.handled;
+            } else if (event.logicalKey == LogicalKeyboardKey.keyB || 
+                       event.logicalKey == LogicalKeyboardKey.backspace) {
+               _confirmExit();
+               return KeyEventResult.handled;
+            }
+          } else if (event is RawKeyUpEvent) {
+            if (event.logicalKey == LogicalKeyboardKey.space) {
+               setState(() => _isXrayEnabled = false);
+               return KeyEventResult.handled;
+            }
+          }
+          return KeyEventResult.ignored;
+        },
+        child: Stack(
       children: [
         Scaffold(
           appBar: AppBar(
@@ -538,7 +604,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Tips: $_tipsUsed | Moves: $_moveCount | Kids Jigsaw Puzzle v1.1.14+27',
+                      'Tips: $_tipsUsed | Moves: $_moveCount | Kids Jigsaw Puzzle v1.1.15+28',
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
