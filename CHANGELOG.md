@@ -2,6 +2,12 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.14+27
+
+- ⬅️ **Reload Relocated**: Moved the Reload button to the left (next to Back button) to prevent accidental clicks near Tips/Hints.
+- 🐛 **Fix**: Restored missing functionality and fixed compilation errors.
+- 🏷️ **Version Sync**: Bumped version to v1.1.14+27.
+
 ## 1.1.13+26
 
 - 👮 **Score Penalty**: Using Tips now deducts 1000 points from the final score! No free lunch.

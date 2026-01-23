@@ -193,6 +193,35 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     });
   }
 
+  void _confirmRestart() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Restart Puzzle?'),
+        content: const Text('Are you sure you want to shuffle and restart?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('No'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              setState(() {
+                _game.shuffle();
+                _moveCount = 0;
+                _tipsUsed = 0;
+                _stopwatch.reset();
+                _stopwatch.start();
+              });
+            },
+            child: const Text('Yes'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildKeyBadge(String label) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
@@ -340,43 +369,24 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
       children: [
         Scaffold(
           appBar: AppBar(
+            leadingWidth: 100,
+            leading: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const BackButton(),
+                IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: _confirmRestart,
+                  tooltip: "Restart Puzzle",
+                ),
+              ],
+            ),
             title: Text('Puzzle Board (${widget.gridSize}x${widget.gridSize})'),
             actions: [
               IconButton(
                 icon: const Icon(Icons.lightbulb_outline),
                 tooltip: "Tip (T)",
                 onPressed: _showSuggestion,
-              ),
-              IconButton(
-                icon: const Icon(Icons.refresh),
-                onPressed: () {
-                   showDialog(
-                     context: context,
-                     builder: (context) => AlertDialog(
-                       title: const Text('Restart Puzzle?'),
-                       content: const Text('Are you sure you want to shuffle and restart?'),
-                       actions: [
-                         TextButton(
-                           onPressed: () => Navigator.pop(context),
-                           child: const Text('No'),
-                         ),
-                         TextButton(
-                           onPressed: () {
-                             Navigator.pop(context);
-                             setState(() {
-                               _game.shuffle();
-                               _moveCount++;
-                               _tipsUsed = 0;
-                               _stopwatch.reset();
-                               _stopwatch.start();
-                             });
-                           },
-                           child: const Text('Yes'),
-                         ),
-                       ],
-                     ),
-                   );
-                },
               ),
               GestureDetector(
                 onTapDown: (_) => setState(() => _isXrayEnabled = true),
@@ -528,7 +538,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Tips: $_tipsUsed | Moves: $_moveCount | Kids Jigsaw Puzzle v1.1.13+26',
+                      'Tips: $_tipsUsed | Moves: $_moveCount | Kids Jigsaw Puzzle v1.1.14+27',
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
