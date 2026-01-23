@@ -89,12 +89,11 @@ class _MainMenuState extends State<MainMenu> {
 
     return Scaffold(
       appBar: AppBar(
-        title: RichText(
-          text: const TextSpan(
-            style: TextStyle(fontSize: 20, color: Colors.white),
+        title: Text.rich(
+          TextSpan(
             children: [
               TextSpan(text: 'Kids Jigsaw Puzzle ', style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: 'v1.1.13', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16)),
+              TextSpan(text: 'v1.1.13', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18)),
             ],
           ),
         ),
