@@ -26,10 +26,10 @@ class _MainMenuState extends State<MainMenu> {
 
   Future<void> _loadImages() async {
     try {
-      final manifestContent = await rootBundle.loadString('AssetManifest.json');
-      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+      // Use the AssetManifest API for robust asset listing
+      final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
       
-      final imagePaths = manifestMap.keys
+      final imagePaths = manifest.listAssets()
           .where((String key) => key.startsWith('assets/images/') && 
                 (key.endsWith('.png') || key.endsWith('.jpg') || key.endsWith('.jpeg')))
           .toList();
@@ -89,7 +89,15 @@ class _MainMenuState extends State<MainMenu> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kids Jigsaw Puzzle'),
+        title: RichText(
+          text: const TextSpan(
+            style: TextStyle(fontSize: 20, color: Colors.white),
+            children: [
+              TextSpan(text: 'Kids Jigsaw Puzzle ', style: TextStyle(fontWeight: FontWeight.bold)),
+              TextSpan(text: 'v1.1.13', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 16)),
+            ],
+          ),
+        ),
       ),
       body: LayoutBuilder(
         builder: (context, constraints) {

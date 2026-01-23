@@ -2,6 +2,13 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.13+26
+
+- 👮 **Score Penalty**: Using Tips now deducts 1000 points from the final score! No free lunch.
+- 🎨 **Title Polish**: Added version number to the Main Menu title (Bold Name + Normal Version).
+- 🎨 **Help Polish**: Improved Help dialog with cleaner toggling (H) and visual keys.
+- 🏷️ **Version Sync**: Bumped version to v1.1.13+26.
+
 ## 1.1.12+25
 
 - 🛡️ **Restart Confirmation**: Added an "Are you sure?" dialog to the Reload button to prevent accidental restarts.

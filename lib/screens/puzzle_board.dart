@@ -27,6 +27,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
   late ConfettiController _confettiController;
   Set<int> _draggedTileIds = {};
   int _moveCount = 0;
+  int _tipsUsed = 0;
   bool _isXrayEnabled = false;
   List<int> _suggestedSwapIndices = [];
   Timer? _suggestionTimer;
@@ -60,7 +61,8 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
   void _showWinDialog() async {
     final duration = _stopwatch.elapsed;
     final seconds = duration.inSeconds;
-    final score = HighScoreManager.calculateScore(widget.gridSize, seconds);
+    final penalty = _tipsUsed * 1000;
+    final score = HighScoreManager.calculateScore(widget.gridSize, seconds, penalty: penalty);
 
     if (!mounted) return;
 
@@ -77,6 +79,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
           setState(() {
             _game.shuffle();
             _moveCount = 0;
+            _tipsUsed = 0;
             _stopwatch.reset();
             _stopwatch.start();
           });
@@ -176,6 +179,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
 
   void _showSuggestion() {
     setState(() {
+      _tipsUsed++;
       _suggestedSwapIndices = _game.getSwapSuggestion();
     });
     
@@ -362,6 +366,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                              setState(() {
                                _game.shuffle();
                                _moveCount++;
+                               _tipsUsed = 0;
                                _stopwatch.reset();
                                _stopwatch.start();
                              });
@@ -521,10 +526,10 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
-                  children: const [
+                  children: [
                     Text(
-                      'Kids Jigsaw Puzzle v1.1.12+25',
-                      style: TextStyle(color: Colors.grey, fontSize: 12),
+                      'Tips: $_tipsUsed | Moves: $_moveCount | Kids Jigsaw Puzzle v1.1.13+26',
+                      style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
                 ),

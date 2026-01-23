@@ -36,14 +36,15 @@ class HighScore {
 class HighScoreManager {
   static const String _key = 'high_scores';
 
-  static int calculateScore(int gridSize, int seconds) {
+  static int calculateScore(int gridSize, int seconds, {int penalty = 0}) {
     // Exponential complexity: gridSize^4 seems fair for the jump from 4x4 to 6x6
     // 4x4 -> 256
     // 6x6 -> 1296
     // 8x8 -> 4096
     final base = gridSize * gridSize * gridSize * gridSize;
     final timeFactor = 10000 / (seconds + 1);
-    return (base * timeFactor).toInt();
+    final rawScore = (base * timeFactor).toInt();
+    return (rawScore - penalty).clamp(0, 999999999);
   }
 
   static Future<void> saveScore(HighScore newScore) async {
