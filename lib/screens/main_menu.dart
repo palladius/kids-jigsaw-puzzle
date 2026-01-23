@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'puzzle_board.dart';
 import 'leaderboard_screen.dart';
 
@@ -12,83 +14,57 @@ class MainMenu extends StatefulWidget {
 }
 
 class _MainMenuState extends State<MainMenu> {
-  static const List<String> _images = [
-    'assets/images/aj-megapuzzle.png',
-    'assets/images/aj-with-giraffe.png',
-    'assets/images/ale-animale-mexico-cool.png',
-    'assets/images/ale-bici-meilen.png',
-    'assets/images/ale-gondola.png',
-    'assets/images/ale-maglietta-ele.png',
-    'assets/images/ale-papa-mexico-pool.png',
-    'assets/images/ale-pupurabbu.png',
-    'assets/images/ale-seby-android.png',
-    'assets/images/ale-seby-bordo-colorato.png',
-    'assets/images/ale-seby-google-chess3.png',
-    'assets/images/ale-seby-google-logo.png',
-    'assets/images/ale-seby-halloween.png',
-    'assets/images/ale-seby-kate-argenta-ele-jc.png',
-    'assets/images/ale-seby-kate-venezia.png',
-    'assets/images/ale-seby-lederhosen-g.png',
-    'assets/images/ale-seby-mexico.png',
-    'assets/images/ale-seby-palla-bici.png',
-    'assets/images/ale-seby-piramide-uxmal.png',
-    'assets/images/ale-seby-scacchi-locarno.png',
-    'assets/images/ale-seby-scemi-tulum.png',
-    'assets/images/ale-seby-ski.png',
-    'assets/images/ale-seby-slitta.png',
-    'assets/images/ale-seby-tandem-wow.png',
-    'assets/images/ale-seby-train.png',
-    'assets/images/ale-seby-tulum.png',
-    'assets/images/ale-seby-uxmal.png',
-    'assets/images/ale-seby-xmas-cropped.png',
-    'assets/images/ale-seby-xmas.png',
-    'assets/images/ale-spiaggia-mexico.png',
-    'assets/images/ale-tieffenbrunnen.png',
-    'assets/images/ale-xmas-jumper.png',
-    'assets/images/arca-di-noe-torta-compleanno.png',
-    'assets/images/comacchio-3ponti.png',
-    'assets/images/family-in-tulum.png',
-    'assets/images/family-pijama-estensi.png',
-    'assets/images/family-santa-2024.png',
-    'assets/images/family-silvester-lauf.png',
-    'assets/images/family-xmas-presents.png',
-    'assets/images/gdg-zurich-jan26.png',
-    'assets/images/logo.png',
-    'assets/images/lucy-bimbi-ikea.png',
-    'assets/images/lucy-kate-ale-rialto.png',
-    'assets/images/lucy-seby-estate-inverno.png',
-    'assets/images/lucy-venezia-kate-bimbi-rialto.png',
-    'assets/images/pupurabbu.png',
-    'assets/images/puzzle-42.png',
-    'assets/images/reindeers-in-stadelhofen.png',
-    'assets/images/reindeers-polar-express.png',
-    'assets/images/ricc-ale-seby-rubycon.png',
-    'assets/images/ricc-bimbi-lugano.png',
-    'assets/images/ricc-lucy-albero-lde.png',
-    'assets/images/seby-in-space.png',
-    'assets/images/seby-palla-di-natale.png',
-    'assets/images/seby-puzzle.png',
-    'assets/images/seby-sgarrupato.png',
-    'assets/images/seby-ski-italy.png',
-    'assets/images/zurich-tram4.png',
-  ];
-
+  List<String> _images = [];
+  bool _isLoadingImages = true;
   String? _selectedImagePath; // null means random
 
   @override
   void initState() {
     super.initState();
-    // Select a random image by default on startup
-    _selectRandomImage();
+    _loadImages();
+  }
+
+  Future<void> _loadImages() async {
+    try {
+      final manifestContent = await rootBundle.loadString('AssetManifest.json');
+      final Map<String, dynamic> manifestMap = json.decode(manifestContent);
+      
+      final imagePaths = manifestMap.keys
+          .where((String key) => key.startsWith('assets/images/') && 
+                (key.endsWith('.png') || key.endsWith('.jpg') || key.endsWith('.jpeg')))
+          .toList();
+      
+      // Sort alphabetically for consistency
+      imagePaths.sort();
+
+      if (mounted) {
+        setState(() {
+          _images = imagePaths;
+          _isLoadingImages = false;
+          _selectRandomImage();
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading asset manifest: $e');
+      if (mounted) {
+        setState(() {
+          _isLoadingImages = false;
+          // Fallback if manifest fails
+          _images = ['assets/images/logo.png']; 
+        });
+      }
+    }
   }
 
   void _selectRandomImage() {
+    if (_images.isEmpty) return;
     setState(() {
       _selectedImagePath = _images[Random().nextInt(_images.length)];
     });
   }
 
   String _getEffectiveImage() {
+    if (_images.isEmpty) return 'assets/images/logo.png';
     return _selectedImagePath ?? _images[Random().nextInt(_images.length)];
   }
 

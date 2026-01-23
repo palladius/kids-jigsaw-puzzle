@@ -2,6 +2,11 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.11+24
+
+- 🐛 **Dynamic Image Loading**: Switched from a hardcoded image list to dynamic loading using `AssetManifest`. This fixes the "Missing Asset" bug forever.
+- 🏷️ **Version Sync**: Bumped version to v1.1.11+24.
+
 ## 1.1.10+23
 
 - ⌨️ **Keyboard Shortcuts**: Added keyboard controls for power users!
