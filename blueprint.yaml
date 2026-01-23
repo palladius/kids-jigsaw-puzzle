@@ -9,7 +9,7 @@ ricc-app:
     to swap tiles. Adjacent tiles merge automatically!
   emoji: "\U0001F9E9"
   owner: ricc@google.com
-  version: 1.1.2+13
+  version: 1.1.15+28
   stack:
   - incubator
   - flutter
@@ -77,3 +77,7 @@ suggested_tech:
   storage: Google Cloud Storage or Firebase Storage
   state_management: Riverpod or Provider
   image_handling: image_picker package
+
+prompts:
+  app_icon: >
+    A vibrant and cute app icon for a kids jigsaw puzzle game. The main element is a smiling jigsaw puzzle piece character with friendly eyes and a happy expression. Use bright primary colors like blue, yellow, and red. The style should be clean, flat vector art with soft rounded corners, suitable for an app icon. White background.
