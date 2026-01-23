@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'puzzle_board.dart';
 import 'leaderboard_screen.dart';
+import '../constants.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -93,7 +94,7 @@ class _MainMenuState extends State<MainMenu> {
           TextSpan(
             children: [
               TextSpan(text: 'Kids Jigsaw Puzzle ', style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: 'v1.1.13', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18)),
+              TextSpan(text: 'v${AppConstants.version}', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18)),
             ],
           ),
         ),

@@ -3,6 +3,7 @@ import 'package:confetti/confetti.dart';
 
 import 'dart:async';
 import 'package:flutter/services.dart';
+import '../constants.dart';
 import 'package:kids_jigsaw_puzzle/logic/puzzle_logic.dart';
 import 'package:kids_jigsaw_puzzle/logic/high_score_manager.dart';
 import 'package:kids_jigsaw_puzzle/screens/win_dialog.dart';
@@ -604,7 +605,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
-                      'Tips: $_tipsUsed | Moves: $_moveCount | Kids Jigsaw Puzzle v1.1.15+28',
+                      'Tips: $_tipsUsed | Moves: $_moveCount | Kids Jigsaw Puzzle v${AppConstants.fullVersion}',
                       style: const TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
