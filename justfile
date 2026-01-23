@@ -3,7 +3,7 @@ default:
     @just --list
 
 # Run the app on Linux
-run-linux:
+run-linux: update-version
     flutter run -d linux
 
 run-mac:
@@ -14,10 +14,16 @@ run-ios:
 
 # Update the image list dynamically
 update-images:
+# Update the image list dynamically
+update-images:
     dart scripts/update_images.dart
 
+# Update version from pubspec to constants.dart
+update-version:
+    dart scripts/update_version.dart
+
 # Build the app for Linux
-build-linux: update-images
+build-linux: update-images update-version
     flutter build linux
 
 build-magic: update-images
@@ -26,16 +32,16 @@ build-magic: update-images
     uname | grep MINGW64 && just build-windows
 
 # Build the app for macOS
-build-macos: update-images
+build-macos: update-images update-version
     @xcode-select -p | grep -q "Xcode.app" || (echo "❌ ERROR: Full Xcode is NOT installed or NOT active." && echo "Current path: $(xcode-select -p)" && echo "Please install Xcode from the App Store and run: 'just setup-mac-xcode'" && exit 1)
     flutter build macos
 
 # Build the app for Windows
-build-windows: update-images
+build-windows: update-images update-version
     flutter build windows
 
 # Build the app for iOS
-build-ios: update-images
+build-ios: update-images update-version
     flutter build ios --no-codesign
 
 # Open iOS Simulator
@@ -43,11 +49,11 @@ open-simulator:
     open -a Simulator
 
 # Build the app for Android (APK)
-build-android: update-images
+build-android: update-images update-version
     flutter build apk
 
 # Build the app for Web
-build-web: update-images
+build-web: update-images update-version
     flutter build web --base-href "/kids-jigsaw-puzzle/"
 
 build-all: build-linux build-macos build-windows build-android
