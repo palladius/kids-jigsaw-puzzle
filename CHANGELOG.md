@@ -2,6 +2,11 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.12+25
+
+- 🛡️ **Restart Confirmation**: Added an "Are you sure?" dialog to the Reload button to prevent accidental restarts.
+- 🏷️ **Version Sync**: Bumped version to v1.1.12+25.
+
 ## 1.1.11+24
 
 - 🐛 **Dynamic Image Loading**: Switched from a hardcoded image list to dynamic loading using `AssetManifest`. This fixes the "Missing Asset" bug forever.

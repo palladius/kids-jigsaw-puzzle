@@ -189,38 +189,121 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     });
   }
 
+  Widget _buildKeyBadge(String label) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.grey.shade400, width: 2),
+        borderRadius: BorderRadius.circular(6),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0, 3),
+            blurRadius: 0,
+          )
+        ],
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 14,
+          fontFamily: 'monospace',
+          color: Colors.grey.shade800,
+        ),
+      ),
+    );
+  }
+
   void _showHelpDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Controls & Legend"),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-             ListTile(
-               leading: Icon(Icons.swap_horiz, color: Colors.blueAccent),
-               title: Text("T - Tip / Suggestion"),
-               subtitle: Text("Highlights two tiles to swap."),
-             ),
-             ListTile(
-               leading: Icon(Icons.visibility, color: Colors.green),
-               title: Text("Space - X-ray Vision"),
-               subtitle: Text("Hold to see correct tiles."),
-             ),
-             ListTile(
-               leading: Icon(Icons.help_outline),
-               title: Text("H - Help"),
-               subtitle: Text("Show this dialog."),
-             ),
+      builder: (context) => Focus(
+        autofocus: true,
+        onKey: (node, event) {
+          if (event is RawKeyDownEvent) {
+            if (event.logicalKey == LogicalKeyboardKey.keyH || 
+                event.logicalKey == LogicalKeyboardKey.escape) {
+               Navigator.pop(context);
+               return KeyEventResult.handled;
+            }
+          }
+          return KeyEventResult.ignored;
+        },
+        child: AlertDialog(
+          title: const Text("Controls & Legend"),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+               Padding(
+                 padding: const EdgeInsets.symmetric(vertical: 8.0),
+                 child: Row(
+                   children: [
+                     _buildKeyBadge("Space"),
+                     const SizedBox(width: 16),
+                     const Expanded(
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Text("X-ray Vision", style: TextStyle(fontWeight: FontWeight.bold)),
+                           Text("Hold to see correct tiles.", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                         ],
+                       ),
+                     ),
+                     const Icon(Icons.visibility, color: Colors.green),
+                   ],
+                 ),
+               ),
+               const Divider(),
+               Padding(
+                 padding: const EdgeInsets.symmetric(vertical: 8.0),
+                 child: Row(
+                   children: [
+                     _buildKeyBadge("T"),
+                     const SizedBox(width: 16),
+                     const Expanded(
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Text("Tip / Suggestion", style: TextStyle(fontWeight: FontWeight.bold)),
+                           Text("Highlights two tiles to swap.", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                         ],
+                       ),
+                     ),
+                     const Icon(Icons.swap_horiz, color: Colors.blueAccent),
+                   ],
+                 ),
+               ),
+               const Divider(),
+               Padding(
+                 padding: const EdgeInsets.symmetric(vertical: 8.0),
+                 child: Row(
+                   children: [
+                     _buildKeyBadge("H"),
+                     const SizedBox(width: 16),
+                     const Expanded(
+                       child: Column(
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+                           Text("Help", style: TextStyle(fontWeight: FontWeight.bold)),
+                           Text("Show/Hide this dialog.", style: TextStyle(fontSize: 12, color: Colors.grey)),
+                         ],
+                       ),
+                     ),
+                     const Icon(Icons.help_outline),
+                   ],
+                 ),
+               ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("Got it!"),
+            ),
           ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Got it!"),
-          ),
-        ],
       ),
     );
   }
@@ -263,12 +346,31 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
               IconButton(
                 icon: const Icon(Icons.refresh),
                 onPressed: () {
-                  setState(() {
-                    _game.shuffle();
-                    _moveCount++;
-                    _stopwatch.reset();
-                    _stopwatch.start();
-                  });
+                   showDialog(
+                     context: context,
+                     builder: (context) => AlertDialog(
+                       title: const Text('Restart Puzzle?'),
+                       content: const Text('Are you sure you want to shuffle and restart?'),
+                       actions: [
+                         TextButton(
+                           onPressed: () => Navigator.pop(context),
+                           child: const Text('No'),
+                         ),
+                         TextButton(
+                           onPressed: () {
+                             Navigator.pop(context);
+                             setState(() {
+                               _game.shuffle();
+                               _moveCount++;
+                               _stopwatch.reset();
+                               _stopwatch.start();
+                             });
+                           },
+                           child: const Text('Yes'),
+                         ),
+                       ],
+                     ),
+                   );
                 },
               ),
               GestureDetector(
@@ -421,7 +523,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Text(
-                      'Kids Jigsaw Puzzle v1.1.11+24',
+                      'Kids Jigsaw Puzzle v1.1.12+25',
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
