@@ -24,7 +24,7 @@ jobs:
 
       - name: Build Web
         run: |
-          dart scripts/update_images.dart
+          dart scripts/update_version.dart
           flutter build web --base-href "/kids-jigsaw-puzzle/"
 
       - name: Deploy to GitHub Pages

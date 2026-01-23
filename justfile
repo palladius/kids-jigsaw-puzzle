@@ -12,34 +12,30 @@ run-mac:
 run-ios:
     flutter run -d ios
 
-# Update the image list dynamically
-update-images:
-    dart scripts/update_images.dart
-
 # Update version from pubspec to constants.dart
 update-version:
     dart scripts/update_version.dart
 
 # Build the app for Linux
-build-linux: update-images update-version
+build-linux: update-version
     flutter build linux
 
-build-magic: update-images
+build-magic:
     uname | grep Darwin && just build-macos 
     uname | grep Linux && just build-linux
     uname | grep MINGW64 && just build-windows
 
 # Build the app for macOS
-build-macos: update-images update-version
+build-macos: update-version
     @xcode-select -p | grep -q "Xcode.app" || (echo "❌ ERROR: Full Xcode is NOT installed or NOT active." && echo "Current path: $(xcode-select -p)" && echo "Please install Xcode from the App Store and run: 'just setup-mac-xcode'" && exit 1)
     flutter build macos
 
 # Build the app for Windows
-build-windows: update-images update-version
+build-windows: update-version
     flutter build windows
 
 # Build the app for iOS
-build-ios: update-images update-version
+build-ios: update-version
     flutter build ios --no-codesign
 
 # Open iOS Simulator
@@ -47,11 +43,11 @@ open-simulator:
     open -a Simulator
 
 # Build the app for Android (APK)
-build-android: update-images update-version
+build-android: update-version
     flutter build apk
 
 # Build the app for Web
-build-web: update-images update-version
+build-web: update-version
     flutter build web --base-href "/kids-jigsaw-puzzle/"
 
 build-all: build-linux build-macos build-windows build-android
@@ -108,3 +104,7 @@ install-linux:
     sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
     which flutter || sudo snap install flutter --classic
     flutter doctor
+
+# List last N GitHub Actions with status
+list-last-gha N="10":
+    gh run list --limit {{N}} --json conclusion,status,workflowName,createdAt,url --jq '.[] | ((if .conclusion == "success" then "✅" elif .conclusion == "failure" then "❌" else "⏳" end) + " " + .workflowName + " (" + .status + ") - " + .createdAt + " - " + .url)'

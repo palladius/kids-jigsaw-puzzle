@@ -2,6 +2,11 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.16+29
+
+- 🏗️ **CI Fix**: Removed obsolete `update_images.dart` script that was breaking the build. The app now uses dynamic asset loading, so the manual list update is no longer needed. Fixed broken GHA (Issue #8).
+- 🏷️ **Version Sync**: Bumped version to v1.1.16+29.
+
 ## 1.1.15+28
 
 - 🛑 **Exit Confirmation**: The Back button (and new shortcuts 'B'/'Backspace') now asks for confirmation before quitting. No more accidental exits!
