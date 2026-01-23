@@ -74,7 +74,7 @@ const RESOURCES = {"flutter.js": "24bc71911b75b5f8135c949e27a2984e",
 "assets/assets/images/ricc-lucy-albero-lde.png": "cf05cef19e35367b567b5c8f1cf6d1b3",
 "assets/assets/images/ricc-bimbi-lugano.png": "f5cb9ea44a55d14dd8a1bcf374428cc8",
 "assets/assets/images/lucy-venezia-kate-bimbi-rialto.png": "e33610c4c1f4fdb2d7e85a4a3ad2fe76",
-"assets/fonts/MaterialIcons-Regular.otf": "79cd1407a7a6c869007f2e9db238db3e",
+"assets/fonts/MaterialIcons-Regular.otf": "a953ec681ccfe49f77b8fc892444209c",
 "assets/NOTICES": "158aacbc2192793bf44dfd4cd35c10d4",
 "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "33b7d9392238c04c131b6ce224e13711",
 "assets/FontManifest.json": "dc3d03800ccca4601324923c0b1d6d57",
@@ -92,9 +92,9 @@ const RESOURCES = {"flutter.js": "24bc71911b75b5f8135c949e27a2984e",
 "canvaskit/canvaskit.js.symbols": "a3c9f77715b642d0437d9c275caba91e",
 "canvaskit/skwasm.js.symbols": "3a4aadf4e8141f284bd524976b1d6bdc",
 "favicon.png": "5dcef449791fa27946b3d35ad8803796",
-"flutter_bootstrap.js": "53b2bde5adbae8e28a91ac7f8b461011",
+"flutter_bootstrap.js": "4b90d997df699f80f44f03a3564f75e5",
 "version.json": "691a867c580825fafd838a4d7ab4031d",
-"main.dart.js": "ed03c64586aac7ba2ab9f41a2795ae35"};
+"main.dart.js": "9dfc5380a3b813eb4a9bcba708b96301"};
 // The application shell files that are downloaded before a service worker can
 // start.
 const CORE = ["main.dart.js",
