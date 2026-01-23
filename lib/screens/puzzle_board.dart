@@ -630,6 +630,6 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
           ),
         ),
       ],
-    ));
+    )));
   }
 }
