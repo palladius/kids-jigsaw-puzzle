@@ -181,9 +181,20 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                 onTapDown: (_) => setState(() => _isXrayEnabled = true),
                 onTapUp: (_) => setState(() => _isXrayEnabled = false),
                 onTapCancel: () => setState(() => _isXrayEnabled = false),
-                child: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Icon(Icons.visibility),
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.all(4.0),
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.greenAccent.withOpacity(_isXrayEnabled ? 0.8 : 0.4),
+                        blurRadius: _isXrayEnabled ? 15.0 : 8.0,
+                        spreadRadius: _isXrayEnabled ? 4.0 : 1.0,
+                      ),
+                    ],
+                  ),
+                  child: const Icon(Icons.visibility, color: Colors.white, size: 32),
                 ),
               ),
             ],
