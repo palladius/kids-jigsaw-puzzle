@@ -2,6 +2,16 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.10+23
+
+- ⌨️ **Keyboard Shortcuts**: Added keyboard controls for power users!
+    - **Spacebar**: Hold to activate X-ray vision.
+    - **T**: Trigger a swap suggestion (Tip).
+    - **H**: Show the Help dialog explaining shortcuts.
+- 💡 **Smart Tips**: Added a "Tip" button (and 'T' key) that highlights two tiles to swap to make progress.
+- ❓ **Help Dialog**: Added a legend for the new controls.
+- 🏷️ **Version Sync**: Bumped version to v1.1.10+23.
+
 ## 1.1.9+22
 
 - 👁️ **X-ray Vision**: Added an X-ray button to toggle visual hints! Correctly placed tiles/islands now glow green, while incorrect ones fade out.

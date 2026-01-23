@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 
+import 'dart:async';
+import 'package:flutter/services.dart';
 import 'package:kids_jigsaw_puzzle/logic/puzzle_logic.dart';
 import 'package:kids_jigsaw_puzzle/logic/high_score_manager.dart';
 import 'package:kids_jigsaw_puzzle/screens/win_dialog.dart';
@@ -26,6 +28,8 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
   Set<int> _draggedTileIds = {};
   int _moveCount = 0;
   bool _isXrayEnabled = false;
+  List<int> _suggestedSwapIndices = [];
+  Timer? _suggestionTimer;
 
   @override
   void initState() {
@@ -38,6 +42,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
 
   @override
   void dispose() {
+    _suggestionTimer?.cancel();
     _confettiController.dispose();
     super.dispose();
   }
@@ -99,6 +104,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     }
 
     final isCorrect = tile.currentIndex == tile.correctIndex;
+    final isSuggested = _suggestedSwapIndices.contains(index);
 
     final topConnected = row > 0 && isConnected(index - widget.gridSize);
     final bottomConnected = row < widget.gridSize - 1 && isConnected(index + widget.gridSize);
@@ -108,7 +114,10 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     Color borderColor;
     double borderWidth;
 
-    if (_isXrayEnabled && isCorrect) {
+    if (isSuggested) {
+       borderColor = Colors.blueAccent;
+       borderWidth = 4.0;
+    } else if (_isXrayEnabled && isCorrect) {
       borderColor = Colors.green;
       borderWidth = 3.0;
     } else {
@@ -126,7 +135,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     );
 
     return Opacity(
-      opacity: (_isXrayEnabled && !isCorrect) ? 0.5 : 1.0,
+      opacity: (_isXrayEnabled && !isCorrect && !isSuggested) ? 0.5 : 1.0,
       child: Container(
         width: size,
         height: size,
@@ -137,6 +146,13 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
             left: leftConnected ? transparentSide : borderSide,
             right: rightConnected ? transparentSide : borderSide,
           ),
+          boxShadow: isSuggested ? [
+             const BoxShadow(
+               color: Colors.blueAccent,
+               blurRadius: 10,
+               spreadRadius: 2,
+             )
+          ] : null,
         ),
         child: ClipRect(
           child: OverflowBox(
@@ -158,14 +174,92 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
     );
   }
 
+  void _showSuggestion() {
+    setState(() {
+      _suggestedSwapIndices = _game.getSwapSuggestion();
+    });
+    
+    _suggestionTimer?.cancel();
+    _suggestionTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted) {
+        setState(() {
+          _suggestedSwapIndices = [];
+        });
+      }
+    });
+  }
+
+  void _showHelpDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Controls & Legend"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: const [
+             ListTile(
+               leading: Icon(Icons.swap_horiz, color: Colors.blueAccent),
+               title: Text("T - Tip / Suggestion"),
+               subtitle: Text("Highlights two tiles to swap."),
+             ),
+             ListTile(
+               leading: Icon(Icons.visibility, color: Colors.green),
+               title: Text("Space - X-ray Vision"),
+               subtitle: Text("Hold to see correct tiles."),
+             ),
+             ListTile(
+               leading: Icon(Icons.help_outline),
+               title: Text("H - Help"),
+               subtitle: Text("Show this dialog."),
+             ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("Got it!"),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Stack(
+    return Focus(
+      autofocus: true,
+      onKey: (node, event) {
+        if (event is RawKeyDownEvent) {
+          if (event.logicalKey == LogicalKeyboardKey.space) {
+             if (!_isXrayEnabled) setState(() => _isXrayEnabled = true);
+             return KeyEventResult.handled;
+          } else if (event.logicalKey == LogicalKeyboardKey.keyT) {
+             _showSuggestion();
+             return KeyEventResult.handled;
+          } else if (event.logicalKey == LogicalKeyboardKey.keyH) {
+             _showHelpDialog();
+             return KeyEventResult.handled;
+          }
+        } else if (event is RawKeyUpEvent) {
+          if (event.logicalKey == LogicalKeyboardKey.space) {
+             setState(() => _isXrayEnabled = false);
+             return KeyEventResult.handled;
+          }
+        }
+        return KeyEventResult.ignored;
+      },
+      child: Stack(
       children: [
         Scaffold(
           appBar: AppBar(
             title: Text('Puzzle Board (${widget.gridSize}x${widget.gridSize})'),
             actions: [
+              IconButton(
+                icon: const Icon(Icons.lightbulb_outline),
+                tooltip: "Tip (T)",
+                onPressed: _showSuggestion,
+              ),
               IconButton(
                 icon: const Icon(Icons.refresh),
                 onPressed: () {
@@ -327,7 +421,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Text(
-                      'Kids Jigsaw Puzzle v1.1.9+22',
+                      'Kids Jigsaw Puzzle v1.1.10+23',
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],
@@ -353,6 +447,6 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
           ),
         ),
       ],
-    );
+    ));
   }
 }

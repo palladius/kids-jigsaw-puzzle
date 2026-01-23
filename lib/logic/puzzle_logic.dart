@@ -188,4 +188,27 @@ class PuzzleGame {
     }
     return true;
   }
+
+  /// Returns a list of 2 indices to swap loops (source, target) that will fix at least one tile.
+  List<int> getSwapSuggestion() {
+    final incorrectIndices = <int>[];
+    for (int i = 0; i < tiles.length; i++) {
+      // If the tile at position i should NOT be at position i
+      // (Note: tiles[i].correctIndex IS the index where this tile belongs)
+      if (tiles[i].correctIndex != i) {
+        incorrectIndices.add(i);
+      }
+    }
+    
+    if (incorrectIndices.isEmpty) return [];
+    
+    // Pick a random incorrect tile
+    incorrectIndices.shuffle();
+    final sourceIndex = incorrectIndices.first;
+    
+    // logic: The tile at 'sourceIndex' belongs at 'targetIndex'
+    final targetIndex = tiles[sourceIndex].correctIndex;
+    
+    return [sourceIndex, targetIndex];
+  }
 }
