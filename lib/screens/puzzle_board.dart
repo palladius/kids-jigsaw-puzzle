@@ -25,6 +25,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
   late ConfettiController _confettiController;
   Set<int> _draggedTileIds = {};
   int _moveCount = 0;
+  bool _isXrayEnabled = false;
 
   @override
   void initState() {
@@ -97,47 +98,60 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
       return _game.areTilesConnected(index, neighborIndex);
     }
 
+    final isCorrect = tile.currentIndex == tile.correctIndex;
+
     final topConnected = row > 0 && isConnected(index - widget.gridSize);
     final bottomConnected = row < widget.gridSize - 1 && isConnected(index + widget.gridSize);
     final leftConnected = col > 0 && isConnected(index - 1);
     final rightConnected = col < widget.gridSize - 1 && isConnected(index + 1);
 
-    final borderSide = isFeedback 
-      ? const BorderSide(color: Colors.yellow, width: 3.0)
-      : BorderSide(
-          color: Colors.white.withOpacity(0.8),
-          width: 1.0,
-        );
+    Color borderColor;
+    double borderWidth;
+
+    if (_isXrayEnabled && isCorrect) {
+      borderColor = Colors.green;
+      borderWidth = 3.0;
+    } else {
+      borderColor = isFeedback 
+        ? Colors.yellow 
+        : Colors.white.withOpacity(0.8);
+      borderWidth = isFeedback ? 3.0 : 1.0;
+    }
+    
+    final borderSide = BorderSide(color: borderColor, width: borderWidth);
     
     final transparentSide = BorderSide(
       color: Colors.transparent,
       width: 0.0,
     );
 
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        border: Border(
-          top: topConnected ? transparentSide : borderSide,
-          bottom: bottomConnected ? transparentSide : borderSide,
-          left: leftConnected ? transparentSide : borderSide,
-          right: rightConnected ? transparentSide : borderSide,
-        ),
-      ),
-      child: ClipRect(
-        child: OverflowBox(
-          maxWidth: fullImageSize,
-          maxHeight: fullImageSize,
-          minWidth: fullImageSize,
-          minHeight: fullImageSize,
-          alignment: Alignment(
-            (correctCol / (widget.gridSize - 1)) * 2 - 1,
-            (correctRow / (widget.gridSize - 1)) * 2 - 1,
+    return Opacity(
+      opacity: (_isXrayEnabled && !isCorrect) ? 0.5 : 1.0,
+      child: Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          border: Border(
+            top: topConnected ? transparentSide : borderSide,
+            bottom: bottomConnected ? transparentSide : borderSide,
+            left: leftConnected ? transparentSide : borderSide,
+            right: rightConnected ? transparentSide : borderSide,
           ),
-          child: Image.asset(
-            widget.imagePath,
-            fit: BoxFit.cover,
+        ),
+        child: ClipRect(
+          child: OverflowBox(
+            maxWidth: fullImageSize,
+            maxHeight: fullImageSize,
+            minWidth: fullImageSize,
+            minHeight: fullImageSize,
+            alignment: Alignment(
+              (correctCol / (widget.gridSize - 1)) * 2 - 1,
+              (correctRow / (widget.gridSize - 1)) * 2 - 1,
+            ),
+            child: Image.asset(
+              widget.imagePath,
+              fit: BoxFit.cover,
+            ),
           ),
         ),
       ),
@@ -162,6 +176,15 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                     _stopwatch.start();
                   });
                 },
+              ),
+              GestureDetector(
+                onTapDown: (_) => setState(() => _isXrayEnabled = true),
+                onTapUp: (_) => setState(() => _isXrayEnabled = false),
+                onTapCancel: () => setState(() => _isXrayEnabled = false),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0),
+                  child: Icon(Icons.visibility),
+                ),
               ),
             ],
           ),
@@ -293,7 +316,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: const [
                     Text(
-                      'Kids Jigsaw Puzzle v1.1.2+13',
+                      'Kids Jigsaw Puzzle v1.1.9+22',
                       style: TextStyle(color: Colors.grey, fontSize: 12),
                     ),
                   ],

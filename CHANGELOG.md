@@ -2,6 +2,13 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.9+22
+
+- 👁️ **X-ray Vision**: Added an X-ray button to toggle visual hints! Correctly placed tiles/islands now glow green, while incorrect ones fade out.
+- 🏝️ **Island Logic Confirmed**: Verified that the Adjacency Islands mechanic (Issue #1) is fully functional.
+- 🐧 **Linux Setup**: Added `just install` and `just install-linux` for easier graphical setup on Linux.
+- 🏷️ **Version Sync**: Bumped version to v1.1.9+22.
+
 ## 1.1.8+21
 
 - 🛫 **Extreme Difficulty**: Added "Airport Wait" (10x10) and "Netflix is Down" (12x12) for those extra long sessions.

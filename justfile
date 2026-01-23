@@ -92,3 +92,15 @@ setup-mac: install-mac
 
 count-images:
     ls assets/images | wc -l
+
+# Install dependencies (generic)
+install:
+    @uname | grep Darwin && just install-mac || echo "Skipping Mac install"
+    @uname | grep Linux && just install-linux || echo "Skipping Linux install"
+
+# Install Linux dependencies
+install-linux:
+    sudo apt-get update
+    sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+    which flutter || sudo snap install flutter --classic
+    flutter doctor
