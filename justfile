@@ -14,8 +14,6 @@ run-ios:
 
 # Update the image list dynamically
 update-images:
-# Update the image list dynamically
-update-images:
     dart scripts/update_images.dart
 
 # Update version from pubspec to constants.dart
