@@ -49,6 +49,13 @@ build-android: update-version
 # Build the app for Web
 build-web: update-version
     flutter build web --base-href "/kids-jigsaw-puzzle/"
+    ln -sfn . build/web/kids-jigsaw-puzzle
+
+# Serve the Web build locally at http://localhost:8765/kids-jigsaw-puzzle/
+serve-web PORT="8765":
+    ln -sfn . build/web/kids-jigsaw-puzzle
+    @echo "🐧 Serving Kids Jigsaw Puzzle at http://localhost:{{PORT}}/kids-jigsaw-puzzle/"
+    python3 -m http.server {{PORT}} --directory build/web
 
 build-all: build-linux build-macos build-windows build-android
     @echo "Building all arhitecture available: Linux, macOS, Windows, Android"
@@ -101,9 +108,17 @@ install:
 # Install Linux dependencies
 install-linux:
     sudo apt-get update
-    sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev
+    sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev mesa-utils
     which flutter || sudo snap install flutter --classic
     flutter doctor
+    @# Ensure USER is in the render group (needed for GPU access)
+    @id -nG "$USER" | grep -qw render || (echo "Adding $USER to render group..." && sudo usermod -aG render "$USER" && echo "✅ Added to render group. Please LOG OUT and LOG BACK IN for this to take effect!")
+
+# Fix Linux specific issues (permissions)
+fix-linux:
+    @echo "Checking permissions..."
+    @id -nG "$USER" | grep -qw render || (echo "Adding $USER to render group..." && sudo usermod -aG render "$USER" && echo "✅ Permissions updated. Please LOG OUT and LOG BACK IN.")
+
 
 # List last N GitHub Actions with status
 list-last-gha N="10":
