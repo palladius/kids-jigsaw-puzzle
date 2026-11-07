@@ -6,6 +6,9 @@ import 'package:flutter/services.dart';
 import '../constants.dart';
 import 'package:kids_jigsaw_puzzle/logic/puzzle_logic.dart';
 import 'package:kids_jigsaw_puzzle/logic/high_score_manager.dart';
+import 'package:kids_jigsaw_puzzle/logic/puffin_login.dart';
+import 'package:kids_jigsaw_puzzle/logic/puffin_bridge_stub.dart'
+    if (dart.library.js_interop) 'package:kids_jigsaw_puzzle/logic/puffin_bridge_web.dart';
 import 'package:kids_jigsaw_puzzle/screens/win_dialog.dart';
 
 class PuzzleBoard extends StatefulWidget {
@@ -33,10 +36,13 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
   bool _canPop = false;
   List<int> _suggestedSwapIndices = [];
   Timer? _suggestionTimer;
+  String _matchStartedAt = DateTime.now().toUtc().toIso8601String();
 
   @override
   void initState() {
     super.initState();
+    _matchStartedAt = DateTime.now().toUtc().toIso8601String();
+    PuffinPlatformBridge.setWebHallOfFameVisible(false);
     _game = PuzzleGame(gridSize: widget.gridSize);
     _game.shuffle();
     _stopwatch.start();
@@ -76,9 +82,14 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
         seconds: seconds,
         gridSize: widget.gridSize,
         imagePath: widget.imagePath,
+        startedAt: _matchStartedAt,
+        moves: _moveCount,
+        tipsUsed: _tipsUsed,
         onPlayAgain: () {
+          PuffinPlatformBridge.setWebHallOfFameVisible(false);
           Navigator.pop(context); // Close dialog
           setState(() {
+            _matchStartedAt = DateTime.now().toUtc().toIso8601String();
             _game.shuffle();
             _moveCount = 0;
             _tipsUsed = 0;
@@ -87,6 +98,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
           });
         },
         onMenu: () {
+          PuffinPlatformBridge.setWebHallOfFameVisible(false);
           Navigator.pop(context); // Close dialog
           Navigator.pop(context); // Back to menu
         },
@@ -475,6 +487,7 @@ class _PuzzleBoardState extends State<PuzzleBoard> {
                   child: const Icon(Icons.visibility, color: Colors.white, size: 32),
                 ),
               ),
+              const PuffinLoginBadge(),
             ],
           ),
           body: Column(

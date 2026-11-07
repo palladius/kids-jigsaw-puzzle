@@ -2,7 +2,7 @@
 // Read from pubspec.yaml
 
 class AppConstants {
-  static const String rawVersion = "1.1.15+28";
+  static const String rawVersion = "1.1.17+30";
 
   static String get version => rawVersion.split('+').first;
   static String get build => rawVersion.contains('+') ? rawVersion.split('+').last : '';

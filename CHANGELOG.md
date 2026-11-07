@@ -2,6 +2,16 @@
 
 Note: version can be ascertained bia `just version`.
 
+## 1.1.17+30
+
+- 🐧 **PuffinLogin Integration (`puffin-login` v1.0)**:
+  - Integrated the 6 Pixar RPG family profiles (**Papino Riccardo** 👑 `#FACC15`, **Mamma Kate** 💜 `#A855F7`, **Alessandro (Ale)** 🐉 `#EF4444`, **Sebastian (Seby)** 🏎️ `#3B82F6`, **Nonna Lucilla** 🌸 `#EC4899`, and **Guest / Ospite** 🐧 `#9CA3AF`) with zero-plaintext salted SHA-256 verification (`SHA-256("puffin-salt-2026:<userId>:<secret>")`).
+  - Added `<puffin-login app-id="kids-jigsaw-puzzle" require-login="true">` and `<puffin-leaderboard filter-game="kids-jigsaw-puzzle">` in `web/index.html` (`web/src/puffin-login.js`) + native Flutter `PuffinLogin` (`lib/logic/puffin_login.dart`) for Web, Linux, macOS, and Android.
+  - Shared-origin `localStorage['puffin_auth_v2']` & `localStorage['puffin_scores_v2']` sync across all `https://palladius.github.io/*` games, plus live Cloud Firestore sync on GCP project `ror-goldie` (`database: puffin-login` via Cloud Run `/v1/scores`).
+  - Automatic score submission for the logged-in hero in `WinDialog` (no more typing your name!) and minimalist Hall of Fame in `LeaderboardScreen` & `WinDialog`.
+  - Added the 6-Hero RPG lineup (`assets/images/puffin-family-6.png`) as a playable jigsaw puzzle image!
+- 🏷️ **Version Sync**: Bumped version to v1.1.17+30.
+
 ## 1.1.16+29
 
 - 🏗️ **CI Fix**: Removed obsolete `update_images.dart` script that was breaking the build. The app now uses dynamic asset loading, so the manual list update is no longer needed. Fixed broken GHA (Issue #8).

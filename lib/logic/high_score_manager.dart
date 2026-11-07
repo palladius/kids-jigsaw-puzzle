@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'puffin_login.dart';
 
 class HighScore {
   final String name;
@@ -47,34 +48,61 @@ class HighScoreManager {
     return (rawScore - penalty).clamp(0, 999999999);
   }
 
-  static Future<void> saveScore(HighScore newScore) async {
+  static Future<void> saveScore(
+    HighScore newScore, {
+    String? startedAt,
+    int? moves,
+    int? tipsUsed,
+    String? imagePath,
+  }) async {
+    // 1. Also submit to PuffinLogin (local outbox + Cloud Firestore `ror-goldie` / `puffin-login`)
+    final imageSlug = (imagePath ?? 'puzzle')
+        .split('/')
+        .last
+        .split('.')
+        .first;
+    final resolvedProfileId = PuffinLogin.instance.currentUser?.id ??
+        normalizePuffinProfileId(newScore.name, allowNull: true);
+    final profile = getPuffinProfileById(resolvedProfileId);
+
+    await PuffinLogin.instance.submitScore(
+      score: newScore.score,
+      durationSec: newScore.seconds,
+      startedAt: startedAt,
+      endedAt: newScore.date.toUtc().toIso8601String(),
+      playerId: resolvedProfileId,
+      summaryText:
+          '${profile.displayName} solved ${newScore.gridSize}x${newScore.gridSize} ($imageSlug) in ${newScore.seconds}s!',
+      extra: <String, dynamic>{
+        'difficulty': '${newScore.gridSize}x${newScore.gridSize}',
+        'grid_size': newScore.gridSize,
+        'pieces': newScore.gridSize * newScore.gridSize,
+        'schema_hash': 'jigsaw_${imageSlug}_${newScore.gridSize}x${newScore.gridSize}',
+        if (moves != null) 'moves': moves,
+        if (tipsUsed != null) 'tips_used': tipsUsed,
+      },
+    );
+
+    // 2. Preserve legacy `high_scores` SharedPreferences list
     final prefs = await SharedPreferences.getInstance();
     final List<HighScore> scores = await getScores();
-    
-    // Find if this player already has a score
+
     final existingIndex = scores.indexWhere(
-      (s) => s.name.toLowerCase() == newScore.name.toLowerCase()
+      (s) => s.name.toLowerCase() == newScore.name.toLowerCase(),
     );
 
     if (existingIndex != -1) {
-      // Only update if the new score is higher
       if (newScore.score > scores[existingIndex].score) {
         scores[existingIndex] = newScore;
       } else {
-        // New score is not better, don't save anything
         return;
       }
     } else {
-      // New player, add them
       scores.add(newScore);
     }
 
-    // Sort by score descending
     scores.sort((a, b) => b.score.compareTo(a.score));
-    
-    // Keep only top 10 unique players
     final topScores = scores.take(10).toList();
-    
     final String encoded = jsonEncode(topScores.map((s) => s.toJson()).toList());
     await prefs.setString(_key, encoded);
   }
@@ -83,13 +111,14 @@ class HighScoreManager {
     final prefs = await SharedPreferences.getInstance();
     final String? encoded = prefs.getString(_key);
     if (encoded == null) return [];
-    
+
     final List<dynamic> decoded = jsonDecode(encoded);
     return decoded.map((item) => HighScore.fromJson(item)).toList();
   }
 
   static Future<List<String>> getUniqueNames() async {
     final scores = await getScores();
-    return scores.map((s) => s.name).toSet().toList();
+    final puffinNames = kPuffinProfiles.map((p) => p.shortName);
+    return <String>{...puffinNames, ...scores.map((s) => s.name)}.toList();
   }
 }

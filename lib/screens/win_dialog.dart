@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:kids_jigsaw_puzzle/logic/high_score_manager.dart';
+import 'package:kids_jigsaw_puzzle/logic/puffin_login.dart';
+import 'package:kids_jigsaw_puzzle/logic/puffin_bridge_stub.dart'
+    if (dart.library.js_interop) 'package:kids_jigsaw_puzzle/logic/puffin_bridge_web.dart';
 
 class WinDialog extends StatefulWidget {
   final int score;
   final int seconds;
   final int gridSize;
   final String imagePath;
+  final String? startedAt;
+  final int? moves;
+  final int? tipsUsed;
   final VoidCallback onPlayAgain;
   final VoidCallback onMenu;
 
@@ -15,6 +21,9 @@ class WinDialog extends StatefulWidget {
     required this.seconds,
     required this.gridSize,
     required this.imagePath,
+    this.startedAt,
+    this.moves,
+    this.tipsUsed,
     required this.onPlayAgain,
     required this.onMenu,
   });
@@ -24,167 +33,166 @@ class WinDialog extends StatefulWidget {
 }
 
 class _WinDialogState extends State<WinDialog> {
-  String _name = '';
-  bool _isSaved = false;
-  late Future<List<String>> _existingNamesFuture;
+  bool _scoreSubmitted = false;
 
   @override
   void initState() {
     super.initState();
-    _existingNamesFuture = HighScoreManager.getUniqueNames();
+    // Reveal Hall of Fame at Game Over (Rule #4 of puffin-login skill)
+    PuffinPlatformBridge.setWebHallOfFameVisible(true);
+    _autoSaveForActiveHero();
   }
 
-  Future<void> _handleSave() async {
-    final nameToSave = _name.trim().isEmpty ? 'Anonymous' : _name.trim();
-    
-    await HighScoreManager.saveScore(HighScore(
-      name: nameToSave,
-      score: widget.score,
-      gridSize: widget.gridSize,
-      seconds: widget.seconds,
-      date: DateTime.now(),
-    ));
+  Future<void> _autoSaveForActiveHero() async {
+    if (_scoreSubmitted) return;
+    _scoreSubmitted = true;
 
-    setState(() {
-      _isSaved = true;
-    });
+    final user = PuffinLogin.instance.currentUser;
+    final heroName = user?.shortName ?? 'Guest';
 
-    // Wait 3 seconds then go to menu
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        widget.onMenu();
-      }
-    });
+    await HighScoreManager.saveScore(
+      HighScore(
+        name: heroName,
+        score: widget.score,
+        gridSize: widget.gridSize,
+        seconds: widget.seconds,
+        date: DateTime.now(),
+      ),
+      startedAt: widget.startedAt,
+      moves: widget.moves,
+      tipsUsed: widget.tipsUsed,
+      imagePath: widget.imagePath,
+    );
+
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // If saved, show the "Thanks" view
-    if (_isSaved) {
-      return Align(
-        alignment: Alignment.centerLeft,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 32.0),
-          child: SizedBox(
-            width: 450,
-            child: AlertDialog(
-              title: Text('🎉 Thanks, $_name!'),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('That was awesome!', style: TextStyle(fontSize: 18)),
-                  const SizedBox(height: 20),
-                   Container(
-                    width: 250,
-                    height: 250,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue, width: 4),
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
-                        ),
-                      ],
+    return ListenableBuilder(
+      listenable: PuffinLogin.instance,
+      builder: (context, _) {
+        final user = PuffinLogin.instance.currentUser ?? getPuffinProfileById('guest');
+        final isIt = PuffinLogin.instance.lang == 'it';
+
+        return Align(
+          alignment: Alignment.centerLeft,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 24.0, right: 24.0),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 460),
+              child: AlertDialog(
+                backgroundColor: const Color(0xFF121528),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(color: user.color, width: 2.5),
+                ),
+                title: Row(
+                  children: [
+                    PuffinAvatarWidget(
+                      profile: user,
+                      size: 44,
+                      zoomedOut: true,
                     ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        widget.imagePath,
-                        fit: BoxFit.cover,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        '🏆 BRAVO, ${user.shortName}!',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 22,
+                        ),
                       ),
                     ),
+                  ],
+                ),
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Text(
+                        isIt
+                            ? 'Risolto in ${widget.seconds} secondi!'
+                            : 'You solved it in ${widget.seconds} seconds!',
+                        style: const TextStyle(color: Color(0xFFCBD5E1), fontSize: 15),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Score: ${widget.score}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w900,
+                          fontSize: 22,
+                          color: user.color,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      Center(
+                        child: Container(
+                          width: 150,
+                          height: 150,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: user.color, width: 3),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(9),
+                            child: Image.asset(
+                              widget.imagePath,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        '🏆 Hall of Fame (Top 10)',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w900,
+                          fontSize: 16,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const PuffinLeaderboardWidget(
+                        filterGame: kKidsJigsawAppId,
+                        limit: 5,
+                        shrinkWrap: true,
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 20),
-                  const Text('Going back to menu...', style: TextStyle(fontStyle: FontStyle.italic, color: Colors.grey)),
+                ),
+                actionsAlignment: MainAxisAlignment.spaceBetween,
+                actions: [
+                  TextButton.icon(
+                    onPressed: widget.onMenu,
+                    icon: const Icon(Icons.home, color: Colors.white70),
+                    label: Text(
+                      isIt ? 'Menu' : 'Main Menu',
+                      style: const TextStyle(color: Colors.white70, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: widget.onPlayAgain,
+                    icon: const Icon(Icons.replay),
+                    label: Text(isIt ? 'Gioca ancora' : 'Play Again'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: user.color,
+                      foregroundColor: const Color(0xFF0A0C16),
+                      textStyle: const TextStyle(fontWeight: FontWeight.w900),
+                      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-        ),
-      );
-    }
-
-    // Default view: Input Name
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 32.0),
-        child: SizedBox(
-          width: 350,
-          child: AlertDialog(
-            title: const Text('🏆 BRAVO!'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('You solved it in ${widget.seconds} seconds!'),
-                const SizedBox(height: 8),
-                Text('Score: ${widget.score}', 
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.blue),
-                ),
-                const SizedBox(height: 16),
-                const Text('Enter your name for the Hall of Fame:'),
-                const SizedBox(height: 8),
-                FutureBuilder<List<String>>(
-                  future: _existingNamesFuture,
-                  builder: (context, snapshot) {
-                    final existingNames = snapshot.data ?? [];
-                    return Autocomplete<String>(
-                      optionsBuilder: (TextEditingValue textEditingValue) {
-                        if (textEditingValue.text.isEmpty) {
-                          return const Iterable<String>.empty();
-                        }
-                        return existingNames.where((String option) {
-                          return option.toLowerCase().contains(textEditingValue.text.toLowerCase());
-                        });
-                      },
-                      onSelected: (String selection) {
-                        setState(() {
-                          _name = selection;
-                        });
-                        // Optional: Auto-save on selection? No, let them click save.
-                      },
-                      fieldViewBuilder: (context, textController, focusNode, onFieldSubmitted) {
-                        // Keep internal state in sync with controller
-                        textController.addListener(() {
-                          _name = textController.text;
-                        });
-                        
-                        return TextField(
-                          controller: textController,
-                          focusNode: focusNode,
-                          autofocus: true, // Focus immediately!
-                          decoration: const InputDecoration(
-                            hintText: 'Your Name',
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.person),
-                          ),
-                          onSubmitted: (_) => _handleSave(), // Allow 'Enter' to save
-                        );
-                      },
-                    );
-                  },
-                ),
-              ],
-            ),
-            actions: [
-              // Hide Play Again initially, prioritize Save
-              ElevatedButton.icon(
-                onPressed: _handleSave,
-                icon: const Icon(Icons.save),
-                label: const Text('Save & Celebrate'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

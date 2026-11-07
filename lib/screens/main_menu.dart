@@ -1,11 +1,13 @@
-import 'dart:convert';
 import 'dart:math';
-import 'dart:ui';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'puzzle_board.dart';
 import 'leaderboard_screen.dart';
 import '../constants.dart';
+import '../logic/puffin_login.dart';
+import '../logic/puffin_bridge_stub.dart'
+    if (dart.library.js_interop) '../logic/puffin_bridge_web.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({super.key});
@@ -16,12 +18,13 @@ class MainMenu extends StatefulWidget {
 
 class _MainMenuState extends State<MainMenu> {
   List<String> _images = [];
-  bool _isLoadingImages = true;
   String? _selectedImagePath; // null means random
 
   @override
   void initState() {
     super.initState();
+    PuffinLogin.instance.init();
+    PuffinPlatformBridge.setWebHallOfFameVisible(false);
     _loadImages();
   }
 
@@ -29,19 +32,20 @@ class _MainMenuState extends State<MainMenu> {
     try {
       // Use the AssetManifest API for robust asset listing
       final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-      
-      final imagePaths = manifest.listAssets()
-          .where((String key) => key.startsWith('assets/images/') && 
-                (key.endsWith('.png') || key.endsWith('.jpg') || key.endsWith('.jpeg')))
+
+      final imagePaths = manifest
+          .listAssets()
+          .where((String key) =>
+              key.startsWith('assets/images/') &&
+              (key.endsWith('.png') || key.endsWith('.jpg') || key.endsWith('.jpeg')))
           .toList();
-      
+
       // Sort alphabetically for consistency
       imagePaths.sort();
 
       if (mounted) {
         setState(() {
           _images = imagePaths;
-          _isLoadingImages = false;
           _selectRandomImage();
         });
       }
@@ -49,9 +53,8 @@ class _MainMenuState extends State<MainMenu> {
       debugPrint('Error loading asset manifest: $e');
       if (mounted) {
         setState(() {
-          _isLoadingImages = false;
           // Fallback if manifest fails
-          _images = ['assets/images/logo.png']; 
+          _images = ['assets/images/logo.png'];
         });
       }
     }
@@ -84,146 +87,236 @@ class _MainMenuState extends State<MainMenu> {
     );
   }
 
+  Widget _buildHeroWelcomeHeader(BuildContext context, {required bool isWide}) {
+    final user = PuffinLogin.instance.currentUser;
+    final isIt = PuffinLogin.instance.lang == 'it';
+    final titleSize = isWide ? 42.0 : 30.0;
+
+    return Column(
+      children: [
+        Text(
+          user != null
+              ? (isIt ? 'Ciao, ${user.shortName}!' : 'Welcome, ${user.shortName}!')
+              : 'Welcome!',
+          style: TextStyle(fontSize: titleSize, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 10),
+        InkWell(
+          borderRadius: BorderRadius.circular(999),
+          onTap: () => PuffinLogin.instance.openLoginModal(context),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+            decoration: BoxDecoration(
+              color: const Color(0xFF121528),
+              borderRadius: BorderRadius.circular(999),
+              border: Border.all(
+                color: user?.color ?? const Color(0xFFF97316),
+                width: 2,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (user != null) ...[
+                  PuffinAvatarWidget(profile: user, size: 26, borderWidth: 1.5),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${user.displayName} • ${isIt ? "Cambia eroe" : "Switch hero"}',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
+                  ),
+                ] else ...[
+                  const Icon(Icons.lock_outline, size: 16, color: Color(0xFFF97316)),
+                  const SizedBox(width: 6),
+                  Text(
+                    isIt ? 'Fai login per giocare' : 'Log in to play (PuffinLogin)',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const bool isDebug = String.fromEnvironment('GAME_DEBUG') == 'true';
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text.rich(
-          TextSpan(
-            children: [
-              TextSpan(text: 'Kids Jigsaw Puzzle ', style: TextStyle(fontWeight: FontWeight.bold)),
-              TextSpan(text: 'v${AppConstants.version}', style: TextStyle(fontWeight: FontWeight.normal, fontSize: 18)),
+    return ListenableBuilder(
+      listenable: PuffinLogin.instance,
+      builder: (context, _) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text.rich(
+              TextSpan(
+                children: [
+                  const TextSpan(
+                    text: 'Kids Jigsaw Puzzle ',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  TextSpan(
+                    text: 'v${AppConstants.version}',
+                    style: const TextStyle(fontWeight: FontWeight.normal, fontSize: 18),
+                  ),
+                ],
+              ),
+            ),
+            actions: const [
+              PuffinLoginBadge(),
             ],
           ),
-        ),
-      ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isWide = constraints.maxWidth > 900;
+          body: LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 900;
 
-          if (isWide) {
-            return Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-                child: Column(
-                  children: [
-                    const Text(
-                      'Welcome!',
-                      style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 40),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              if (isWide) {
+                return Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 40),
+                    child: Column(
                       children: [
-                        // Left Column: Image Selection
-                        SizedBox(
-                          width: 400,
-                          child: Column(
-                            children: [
-                              Text(
-                                'Selected Image (${_images.length} available):',
-                                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        _buildHeroWelcomeHeader(context, isWide: true),
+                        const SizedBox(height: 32),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Left Column: Image Selection
+                            SizedBox(
+                              width: 400,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Selected Image (${_images.length} available):',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  _buildImagePreview(),
+                                  const SizedBox(height: 20),
+                                  _buildImageSelectionButtons(context),
+                                  const SizedBox(height: 40),
+                                  _buildHallOfFameButton(context),
+                                ],
                               ),
-                              const SizedBox(height: 20),
-                              _buildImagePreview(),
-                              const SizedBox(height: 20),
-                              _buildImageSelectionButtons(context),
-                              const SizedBox(height: 40),
-                              _buildHallOfFameButton(context),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 60),
-                        // Right Column: Difficulty
-                        SizedBox(
-                          width: 320,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const Text(
-                                'Choose Difficulty:',
-                                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                            ),
+                            const SizedBox(width: 60),
+                            // Right Column: Difficulty
+                            SizedBox(
+                              width: 320,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  const Text(
+                                    'Choose Difficulty:',
+                                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  if (isDebug)
+                                    _buildDifficultyButton(
+                                        context, 'DEBUG (2x2)', 2, Colors.red.shade100),
+                                  _buildDifficultyButton(
+                                      context, 'Easy Peasy (4x4)', 4, Colors.green.shade100),
+                                  _buildDifficultyButton(
+                                      context, 'Lemon Squeezy (5x5)', 5, Colors.lime.shade100),
+                                  _buildDifficultyButton(
+                                      context, 'Smarty Pants (6x6)', 6, Colors.blue.shade100),
+                                  _buildDifficultyButton(
+                                      context, 'Whiz Kid (7x7)', 7, Colors.orange.shade100),
+                                  _buildDifficultyButton(
+                                      context, 'Genius Mode (8x8)', 8, Colors.purple.shade100),
+                                  _buildDifficultyButton(
+                                      context, 'Airport Wait (10x10)', 10, Colors.grey.shade200),
+                                  _buildDifficultyButton(
+                                      context, 'Netflix is Down (12x12)', 12, Colors.red.shade50),
+                                ],
                               ),
-                              const SizedBox(height: 20),
-                              if (isDebug) _buildDifficultyButton(context, 'DEBUG (2x2)', 2, Colors.red.shade100),
-                              _buildDifficultyButton(context, 'Easy Peasy (4x4)', 4, Colors.green.shade100),
-                              _buildDifficultyButton(context, 'Lemon Squeezy (5x5)', 5, Colors.lime.shade100),
-                              _buildDifficultyButton(context, 'Smarty Pants (6x6)', 6, Colors.blue.shade100),
-                              _buildDifficultyButton(context, 'Whiz Kid (7x7)', 7, Colors.orange.shade100),
-                              _buildDifficultyButton(context, 'Genius Mode (8x8)', 8, Colors.purple.shade100),
-                              _buildDifficultyButton(context, 'Airport Wait (10x10)', 10, Colors.grey.shade200),
-                              _buildDifficultyButton(context, 'Netflix is Down (12x12)', 12, Colors.red.shade50),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
-              ),
-            );
-          } else {
-            return Center(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Welcome!',
-                      style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+                  ),
+                );
+              } else {
+                return Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildHeroWelcomeHeader(context, isWide: false),
+                        const SizedBox(height: 24),
+                        Text(
+                          'Selected Image (${_images.length} available):',
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(height: 20),
+                        _buildImagePreview(),
+                        const SizedBox(height: 20),
+                        _buildImageSelectionButtons(context),
+                        const SizedBox(height: 40),
+                        const Text(
+                          'Choose Difficulty:',
+                          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 20),
+                        if (isDebug)
+                          _buildDifficultyButton(context, 'DEBUG (2x2)', 2, Colors.red.shade100),
+                        _buildDifficultyButton(
+                            context, 'Easy Peasy (4x4)', 4, Colors.green.shade100),
+                        _buildDifficultyButton(
+                            context, 'Lemon Squeezy (5x5)', 5, Colors.lime.shade100),
+                        _buildDifficultyButton(
+                            context, 'Smarty Pants (6x6)', 6, Colors.blue.shade100),
+                        _buildDifficultyButton(
+                            context, 'Whiz Kid (7x7)', 7, Colors.orange.shade100),
+                        _buildDifficultyButton(
+                            context, 'Genius Mode (8x8)', 8, Colors.purple.shade100),
+                        _buildDifficultyButton(
+                            context, 'Airport Wait (10x10)', 10, Colors.grey.shade200),
+                        _buildDifficultyButton(
+                            context, 'Netflix is Down (12x12)', 12, Colors.red.shade50),
+                        const SizedBox(height: 40),
+                        _buildHallOfFameButton(context),
+                      ],
                     ),
-                    const SizedBox(height: 30),
-                    Text(
-                      'Selected Image (${_images.length} available):',
-                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(height: 20),
-                    _buildImagePreview(),
-                    const SizedBox(height: 20),
-                    _buildImageSelectionButtons(context),
-                    const SizedBox(height: 40),
-                    const Text(
-                      'Choose Difficulty:',
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 20),
-                    if (isDebug) _buildDifficultyButton(context, 'DEBUG (2x2)', 2, Colors.red.shade100),
-                    _buildDifficultyButton(context, 'Easy Peasy (4x4)', 4, Colors.green.shade100),
-                    _buildDifficultyButton(context, 'Lemon Squeezy (5x5)', 5, Colors.lime.shade100),
-                    _buildDifficultyButton(context, 'Smarty Pants (6x6)', 6, Colors.blue.shade100),
-                    _buildDifficultyButton(context, 'Whiz Kid (7x7)', 7, Colors.orange.shade100),
-                    _buildDifficultyButton(context, 'Genius Mode (8x8)', 8, Colors.purple.shade100),
-                    _buildDifficultyButton(context, 'Airport Wait (10x10)', 10, Colors.grey.shade200),
-                    _buildDifficultyButton(context, 'Netflix is Down (12x12)', 12, Colors.red.shade50),
-                    const SizedBox(height: 40),
-                    _buildHallOfFameButton(context),
-                  ],
-                ),
-              ),
-            );
-          }
-        },
-      ),
+                  ),
+                );
+              }
+            },
+          ),
+        );
+      },
     );
   }
 
   Widget _buildImagePreview() {
-    final imagePath = _selectedImagePath ?? 'assets/images/logo.png'; // Fallback for preview
+    final imagePath = _selectedImagePath ?? 'assets/images/logo.png';
+    final borderColor = PuffinLogin.instance.currentUser?.color ?? Colors.blue;
     return Column(
       children: [
         Container(
           width: 250,
           height: 250,
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.blue, width: 4),
+            border: Border.all(color: borderColor, width: 4),
             borderRadius: BorderRadius.circular(16),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha: 0.1),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -231,9 +324,9 @@ class _MainMenuState extends State<MainMenu> {
           ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: _selectedImagePath == null 
-              ? const Center(child: Icon(Icons.casino, size: 80, color: Colors.blue))
-              : Image.asset(imagePath, fit: BoxFit.cover),
+            child: _selectedImagePath == null
+                ? Center(child: Icon(Icons.casino, size: 80, color: borderColor))
+                : Image.asset(imagePath, fit: BoxFit.cover),
           ),
         ),
         if (_selectedImagePath != null)
@@ -247,7 +340,8 @@ class _MainMenuState extends State<MainMenu> {
         else
           const Padding(
             padding: EdgeInsets.only(top: 12),
-            child: Text('Random Image', style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
+            child: Text('Random Image',
+                style: TextStyle(fontSize: 16, fontStyle: FontStyle.italic)),
           ),
       ],
     );
@@ -263,13 +357,15 @@ class _MainMenuState extends State<MainMenu> {
           onPressed: () => setState(() => _selectedImagePath = null),
           icon: const Icon(Icons.casino),
           label: const Text('Random'),
-          style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
+          style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
         ),
         ElevatedButton.icon(
           onPressed: () => _showImageSelectionDialog(context),
           icon: const Icon(Icons.photo_library),
           label: const Text('Choose Image'),
-          style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
+          style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15)),
         ),
       ],
     );
@@ -294,13 +390,19 @@ class _MainMenuState extends State<MainMenu> {
     );
   }
 
-  Widget _buildDifficultyButton(BuildContext context, String label, int gridSize, Color color) {
+  Widget _buildDifficultyButton(
+      BuildContext context, String label, int gridSize, Color color) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: SizedBox(
         width: 280,
         child: ElevatedButton(
           onPressed: () {
+            if (kIsWeb && !PuffinLogin.instance.isLoggedIn) {
+              PuffinLogin.instance.openLoginModal(context, mandatory: true);
+              return;
+            }
+            PuffinPlatformBridge.setWebHallOfFameVisible(false);
             Navigator.push(
               context,
               MaterialPageRoute(

@@ -18,21 +18,148 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="description" content="Kids Jigsaw Puzzle — Carlesso Family Edition with PuffinLogin & Cloud Firestore Hall of Fame!">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="kids_jigsaw_puzzle">
+  <meta name="apple-mobile-web-app-title" content="Kids Jigsaw Puzzle">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>kids_jigsaw_puzzle</title>
+  <title>🧩 Kids Jigsaw Puzzle — PuffinLogin Edition</title>
   <link rel="manifest" href="manifest.json">
+
+  <style>
+    /* Floating Top-Right PuffinLogin Badge inside the Flutter AppBar region */
+    #puffin-hud-mount {
+      position: fixed;
+      top: 9px;
+      right: 14px;
+      z-index: 99999;
+      pointer-events: auto;
+    }
+
+    /* End-of-Match Hall of Fame section (HIDDEN during gameplay; revealed ONLY on Game Over!) */
+    #hof-section[hidden] {
+      display: none !important;
+    }
+
+    #hof-section {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      width: min(92vw, 440px);
+      max-height: 55vh;
+      overflow-y: auto;
+      background: rgba(18, 21, 40, 0.96);
+      border: 2px solid rgba(250, 204, 21, 0.35);
+      border-radius: 18px;
+      padding: 12px 14px;
+      box-shadow: 0 16px 40px rgba(0, 0, 0, 0.65);
+      z-index: 99990;
+      color: #f8fafc;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    #hof-section .hof-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    #hof-section h2 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 900;
+    }
+
+    #hof-section .hof-close-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f8fafc;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
+  <!-- 1. Top-Right PuffinLogin Widget (Mandatory Login Gate: require-login="true") -->
+  <div id="puffin-hud-mount">
+    <puffin-login id="puffin-widget" app-id="kids-jigsaw-puzzle" require-login="true"></puffin-login>
+  </div>
+
+  <!-- 2. End-of-Match Hall of Fame (Hidden during gameplay; reveal ONLY on Game Over!) -->
+  <section id="hof-section" hidden>
+    <div class="hof-header">
+      <h2>🏆 Hall of Fame</h2>
+      <button type="button" class="hof-close-btn" id="hof-close-btn" title="Close">✕</button>
+    </div>
+    <puffin-leaderboard id="game-lb" filter-game="kids-jigsaw-puzzle"></puffin-leaderboard>
+  </section>
+
+  <script type="module">
+    import { PuffinLogin } from './src/puffin-login.js';
+
+    const widget = document.getElementById('puffin-widget');
+    const hofSection = document.getElementById('hof-section');
+    const hofCloseBtn = document.getElementById('hof-close-btn');
+
+    if (hofCloseBtn) {
+      hofCloseBtn.addEventListener('click', () => {
+        hofSection.hidden = true;
+      });
+    }
+
+    // Prevent keyboard events inside <puffin-login> dialog from triggering Flutter canvas shortcuts
+    for (const evtName of ['keydown', 'keyup', 'keypress']) {
+      window.addEventListener(
+        evtName,
+        (e) => {
+          const path = typeof e.composedPath === 'function' ? e.composedPath() : [];
+          if (path.includes(widget) || (widget?.$dialog && widget.$dialog.open)) {
+            e.stopImmediatePropagation();
+          }
+        },
+        true
+      );
+    }
+
+    // Bridge helper for Flutter Web <-> PuffinLogin Web Component
+    window._puffinFlutterBridge = {
+      openModal(preselectUserId) {
+        if (widget && typeof widget.openModal === 'function') {
+          widget.openModal(preselectUserId || null);
+        }
+      },
+      setHallOfFameVisible(visible) {
+        if (hofSection) {
+          hofSection.hidden = !visible;
+        }
+      },
+      async submitScoreFromFlutter(payloadJson) {
+        try {
+          const payload = JSON.parse(payloadJson);
+          const result = await PuffinLogin.submitScore({
+            ...payload,
+            appId: payload.game_id || payload.appId || 'kids-jigsaw-puzzle',
+          });
+          return JSON.stringify(result);
+        } catch (err) {
+          console.warn('[PuffinLogin Bridge] submitScore error:', err);
+          return '';
+        }
+      },
+    };
+  </script>
+
   <script src="flutter_bootstrap.js" async></script>
 </body>
 </html>
