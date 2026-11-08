@@ -75,11 +75,15 @@ class HighScoreManager {
           '${profile.displayName} solved ${newScore.gridSize}x${newScore.gridSize} ($imageSlug) in ${newScore.seconds}s!',
       extra: <String, dynamic>{
         'difficulty': '${newScore.gridSize}x${newScore.gridSize}',
+        'grid': '${newScore.gridSize}x${newScore.gridSize}',
         'grid_size': newScore.gridSize,
         'pieces': newScore.gridSize * newScore.gridSize,
+        'seconds': newScore.seconds,
+        'duration_sec': newScore.seconds,
         'schema_hash': 'jigsaw_${imageSlug}_${newScore.gridSize}x${newScore.gridSize}',
         if (moves != null) 'moves': moves,
         if (tipsUsed != null) 'tips_used': tipsUsed,
+        if (tipsUsed != null) 'hints': tipsUsed,
       },
     );
 

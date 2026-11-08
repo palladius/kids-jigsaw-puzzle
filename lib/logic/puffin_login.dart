@@ -426,6 +426,14 @@ class PuffinScoreRecord {
     if (raw['gridSize'] != null && !extraMap.containsKey('grid_size')) {
       extraMap['grid_size'] = raw['gridSize'];
     }
+    if (extraMap['grid_size'] is num && !extraMap.containsKey('grid')) {
+      final gs = (extraMap['grid_size'] as num).toInt();
+      extraMap['grid'] = '${gs}x$gs';
+      extraMap['difficulty'] ??= '${gs}x$gs';
+    }
+    if (extraMap['tips_used'] != null && !extraMap.containsKey('hints')) {
+      extraMap['hints'] = extraMap['tips_used'];
+    }
 
     final hostname = (raw['hostname'] ?? '').toString().trim();
     final ipAddress = (raw['ip_address'] ?? raw['ipAddress'] ?? '127.0.0.1').toString().trim();
